@@ -1,20 +1,10 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
   siteUrl: 'https://www.auricjewels.com',
-  generateRobotsTxt: true,
+  generateRobotsTxt: false, // Using static public/robots.txt instead
   sitemapSize: 5000,
   changefreq: 'weekly',
   priority: 0.7,
-  robotsTxtOptions: {
-    additionalSitemaps: [],
-    policies: [
-      {
-        userAgent: '*',
-        allow: '/',
-        disallow: ['/api/', '/checkout/', '/account/'],
-      },
-    ],
-  },
   transform: async (config, path) => {
     // Higher priority for homepage and category pages
     let priority = config.priority;

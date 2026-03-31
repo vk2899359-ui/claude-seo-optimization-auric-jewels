@@ -21,27 +21,20 @@ export default function ProductPage({ product }) {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
+    brand: 'Auric Jewels',
+    category: product.category,
     description: seo.description,
     image: product.images || [],
-    brand: {
-      '@type': 'Brand',
-      name: 'Auric Jewels',
-    },
     offers: {
       '@type': 'Offer',
-      url: `${SITE_URL}/products/${product.slug}`,
       priceCurrency: 'INR',
       price: product.price,
-      availability: product.inStock
-        ? 'https://schema.org/InStock'
-        : 'https://schema.org/OutOfStock',
+      availability: 'https://schema.org/InStock',
       seller: {
         '@type': 'Organization',
         name: 'Auric Jewels',
       },
     },
-    material: product.material,
-    category: product.category,
   };
 
   const breadcrumbData = {

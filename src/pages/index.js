@@ -15,32 +15,21 @@ import { homepageSEO, SITE_URL } from '../lib/seo-config';
 
 const structuredData = {
   '@context': 'https://schema.org',
-  '@type': ['JewelryStore', 'LocalBusiness'],
+  '@type': 'JewelryStore',
   name: 'Auric Jewels',
   url: SITE_URL,
-  logo: `${SITE_URL}/images/auric-jewels-logo.png`,
-  image: `${SITE_URL}/images/auric-jewels-storefront.jpg`,
+  image: `${SITE_URL}/logo.png`,
   description:
-    'Premium gold and diamond jewellery store in Gurgaon offering handcrafted rings, earrings, necklaces, bracelets and more.',
+    'Premium gold & diamond jewellery store in Gurgaon. BIS hallmarked jewellery, certified diamonds, solitaire collection.',
   address: {
     '@type': 'PostalAddress',
     addressLocality: 'Gurgaon',
     addressRegion: 'Haryana',
     addressCountry: 'IN',
   },
-  geo: {
-    '@type': 'GeoCoordinates',
-    latitude: '28.4595',
-    longitude: '77.0266',
-  },
-  priceRange: '$$$$',
-  openingHoursSpecification: {
-    '@type': 'OpeningHoursSpecification',
-    dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-    opens: '10:00',
-    closes: '20:00',
-  },
-  sameAs: [],
+  priceRange: '\u20B9\u20B9\u20B9',
+  telephone: '[add your phone number]',
+  openingHours: 'Mo-Su 10:00-20:00',
 };
 
 export default function HomePage() {
