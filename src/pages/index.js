@@ -95,10 +95,13 @@ export default function HomePage() {
           <h2>Popular Collections</h2>
           <nav aria-label="Popular collections">
             <ul>
-              <li><a href="/collections/best-seller">Best Sellers</a></li>
+              <li><a href="/collections/solitaire-collection">Solitaire Collection</a></li>
+              <li><a href="/collections/best-sellers">Best Sellers</a></li>
               <li><a href="/collections/new-arrivals">New Arrivals</a></li>
-              <li><a href="/collections/under-50k">Under &#8377;50,000</a></li>
-              <li><a href="/collections/gifting">Gifting Collection</a></li>
+              <li><a href="/collections/for-her">Jewellery for Her</a></li>
+              <li><a href="/collections/for-him">Jewellery for Him</a></li>
+              <li><a href="/collections/anniversary-collection">Anniversary Collection</a></li>
+              <li><a href="/collections/valentine-collection">Valentine&apos;s Day Gifts</a></li>
             </ul>
           </nav>
         </section>

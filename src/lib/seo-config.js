@@ -19,43 +19,43 @@ export const homepageSEO = {
 // ─── CATEGORY / COLLECTION PAGES ────────────────────────────
 export const categorySEO = {
   rings: {
-    title: 'Gold & Diamond Rings | Buy Online | Auric Jewels Gurgaon',
+    title: 'Gold & Diamond Rings | Engagement & Daily Wear | Auric Jewels Gurgaon',
     h1: 'Gold & Diamond Rings | Auric Jewels Gurgaon',
     description:
       'Discover stunning gold and diamond rings at Auric Jewels Gurgaon. Engagement rings, wedding bands, cocktail rings & everyday designs. BIS hallmarked. Free shipping.',
   },
   earrings: {
-    title: 'Diamond & Gold Earrings for Women | Buy Online | Auric Jewels Gurgaon',
+    title: 'Diamond & Gold Earrings for Women | Designer Collection | Auric Jewels Gurgaon',
     h1: 'Designer Gold & Diamond Earrings | Auric Jewels Gurgaon',
     description:
       'Shop designer gold and diamond earrings at Auric Jewels Gurgaon. Studs, hoops, jhumkas, drops & chandbalis. Certified diamonds, BIS hallmarked gold. Free shipping.',
   },
   necklaces: {
-    title: 'Gold & Diamond Necklaces for Women | Buy Online | Auric Jewels Gurgaon',
+    title: 'Gold & Diamond Necklaces | Bridal & Daily Wear | Auric Jewels Gurgaon',
     h1: 'Gold & Diamond Necklaces | Auric Jewels Gurgaon',
     description:
       'Explore elegant gold and diamond necklaces at Auric Jewels Gurgaon. Chokers, pendants, layered necklaces & statement pieces. BIS hallmarked gold. Free shipping.',
   },
   bracelets: {
-    title: 'Diamond & Gold Bracelets for Women | Buy Online | Auric Jewels Gurgaon',
+    title: 'Diamond & Gold Bracelets for Women | Shop Online | Auric Jewels Gurgaon',
     h1: 'Diamond & Gold Bracelets for Women | Auric Jewels Gurgaon',
     description:
       'Shop gold and diamond bracelets at Auric Jewels Gurgaon. Tennis bracelets, bangles, charm bracelets & cuffs. Certified diamonds. BIS hallmarked. Free shipping.',
   },
   bangles: {
-    title: 'Gold & Diamond Bangles | Buy Online | Auric Jewels Gurgaon',
+    title: 'Gold & Diamond Bangles for Women | Buy Online | Auric Jewels Gurgaon',
     h1: 'Gold & Diamond Bangles | Auric Jewels Gurgaon',
     description:
       'Discover exquisite gold and diamond bangles at Auric Jewels Gurgaon. Traditional kadas, modern bangles & diamond-studded designs. BIS hallmarked. Free shipping.',
   },
   pendants: {
-    title: 'Diamond & Gold Pendants | Buy Online | Auric Jewels Gurgaon',
+    title: 'Diamond & Gold Pendants for Women | Auric Jewels Gurgaon',
     h1: 'Diamond & Gold Pendants | Auric Jewels Gurgaon',
     description:
       'Shop beautiful gold and diamond pendants at Auric Jewels Gurgaon. Solitaire, cluster, initial & religious pendants. Certified diamonds. BIS hallmarked. Free shipping.',
   },
   chains: {
-    title: 'Gold Chains for Women & Men | Buy Online | Auric Jewels Gurgaon',
+    title: 'Gold Chains for Women & Men | Latest Designs | Auric Jewels Gurgaon',
     h1: 'Gold Chains for Women & Men | Auric Jewels Gurgaon',
     description:
       'Shop gold chains for women and men at Auric Jewels Gurgaon. Rope chains, cable chains, box chains & designer styles in 18K & 22K BIS hallmarked gold. Free shipping.',
@@ -76,7 +76,13 @@ export const categorySEO = {
 
 // ─── COLLECTION PAGES (Best Sellers, New Arrivals, etc.) ────
 export const collectionSEO = {
-  'best-seller': {
+  'solitaire-collection': {
+    title: 'Solitaire Diamond Jewellery Collection | Auric Jewels Gurgaon',
+    h1: 'Solitaire Diamond Jewellery Collection | Auric Jewels Gurgaon',
+    description:
+      'Shop stunning solitaire diamond rings, earrings & pendants at Auric Jewels Gurgaon. IGI/GIA certified solitaires in 18K & 22K gold. Free shipping.',
+  },
+  'best-sellers': {
     title: 'Best Selling Gold & Diamond Jewellery | Auric Jewels Gurgaon',
     h1: 'Best Selling Gold & Diamond Jewellery | Auric Jewels Gurgaon',
     description:
@@ -88,17 +94,29 @@ export const collectionSEO = {
     description:
       'Explore the latest gold and diamond jewellery at Auric Jewels Gurgaon. Fresh designs in rings, earrings, necklaces, bracelets & more. Shop new arrivals today.',
   },
-  'under-50k': {
-    title: 'Gold & Diamond Jewellery Under ₹50,000 | Auric Jewels Gurgaon',
-    h1: 'Gold & Diamond Jewellery Under ₹50,000 | Auric Jewels Gurgaon',
+  'for-her': {
+    title: 'Gold & Diamond Jewellery for Her | Auric Jewels Gurgaon',
+    h1: 'Gold & Diamond Jewellery for Her | Auric Jewels Gurgaon',
     description:
-      'Shop affordable gold and diamond jewellery under ₹50,000 at Auric Jewels Gurgaon. Budget-friendly rings, earrings & pendants. Certified diamonds. Free shipping.',
+      'Shop gold and diamond jewellery for women at Auric Jewels Gurgaon. Curated rings, earrings, necklaces & bracelets for every occasion. BIS hallmarked. Free shipping.',
   },
-  'gifting': {
-    title: 'Gold & Diamond Jewellery Gifts | Buy Online | Auric Jewels Gurgaon',
-    h1: 'Gold & Diamond Jewellery Gifts | Auric Jewels Gurgaon',
+  'for-him': {
+    title: "Men's Gold & Diamond Jewellery | Auric Jewels Gurgaon",
+    h1: "Men's Gold & Diamond Jewellery | Auric Jewels Gurgaon",
     description:
-      'Find the perfect gold and diamond jewellery gift at Auric Jewels Gurgaon. Curated gift collections for every occasion. Gift wrapping available. Free shipping.',
+      "Shop men's gold and diamond jewellery at Auric Jewels Gurgaon. Rings, bracelets, chains & cufflinks for men. BIS hallmarked gold. Certified diamonds. Free shipping.",
+  },
+  'anniversary-collection': {
+    title: 'Anniversary Gift Jewellery | Gold & Diamond | Auric Jewels Gurgaon',
+    h1: 'Anniversary Gift Jewellery | Gold & Diamond | Auric Jewels Gurgaon',
+    description:
+      'Find the perfect anniversary jewellery gift at Auric Jewels Gurgaon. Gold and diamond rings, pendants & bracelets for every milestone. Gift wrapping available.',
+  },
+  'valentine-collection': {
+    title: "Valentine's Day Jewellery Gifts | Auric Jewels Gurgaon",
+    h1: "Valentine's Day Jewellery Gifts | Auric Jewels Gurgaon",
+    description:
+      "Shop Valentine's Day jewellery gifts at Auric Jewels Gurgaon. Heart pendants, diamond rings & love-themed designs in certified gold. Free gift wrapping & shipping.",
   },
 };
 
