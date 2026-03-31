@@ -20,7 +20,7 @@ export const homepageSEO = {
 export const categorySEO = {
   rings: {
     title: 'Gold & Diamond Rings | Buy Online | Auric Jewels Gurgaon',
-    h1: 'Gold & Diamond Rings | Buy Online | Auric Jewels Gurgaon',
+    h1: 'Gold & Diamond Rings | Auric Jewels Gurgaon',
     description:
       'Discover stunning gold and diamond rings at Auric Jewels Gurgaon. Engagement rings, wedding bands, cocktail rings & everyday designs. BIS hallmarked. Free shipping.',
   },
@@ -37,8 +37,8 @@ export const categorySEO = {
       'Explore elegant gold and diamond necklaces at Auric Jewels Gurgaon. Chokers, pendants, layered necklaces & statement pieces. BIS hallmarked gold. Free shipping.',
   },
   bracelets: {
-    title: 'Gold & Diamond Bracelets for Women | Buy Online | Auric Jewels Gurgaon',
-    h1: 'Gold & Diamond Bracelets | Auric Jewels Gurgaon',
+    title: 'Diamond & Gold Bracelets for Women | Buy Online | Auric Jewels Gurgaon',
+    h1: 'Diamond & Gold Bracelets for Women | Auric Jewels Gurgaon',
     description:
       'Shop gold and diamond bracelets at Auric Jewels Gurgaon. Tennis bracelets, bangles, charm bracelets & cuffs. Certified diamonds. BIS hallmarked. Free shipping.',
   },
@@ -49,10 +49,16 @@ export const categorySEO = {
       'Discover exquisite gold and diamond bangles at Auric Jewels Gurgaon. Traditional kadas, modern bangles & diamond-studded designs. BIS hallmarked. Free shipping.',
   },
   pendants: {
-    title: 'Gold & Diamond Pendants | Buy Online | Auric Jewels Gurgaon',
-    h1: 'Gold & Diamond Pendants | Auric Jewels Gurgaon',
+    title: 'Diamond & Gold Pendants | Buy Online | Auric Jewels Gurgaon',
+    h1: 'Diamond & Gold Pendants | Auric Jewels Gurgaon',
     description:
       'Shop beautiful gold and diamond pendants at Auric Jewels Gurgaon. Solitaire, cluster, initial & religious pendants. Certified diamonds. BIS hallmarked. Free shipping.',
+  },
+  chains: {
+    title: 'Gold Chains for Women & Men | Buy Online | Auric Jewels Gurgaon',
+    h1: 'Gold Chains for Women & Men | Auric Jewels Gurgaon',
+    description:
+      'Shop gold chains for women and men at Auric Jewels Gurgaon. Rope chains, cable chains, box chains & designer styles in 18K & 22K BIS hallmarked gold. Free shipping.',
   },
   'mangalsutra': {
     title: 'Diamond Mangalsutra Designs | Buy Online | Auric Jewels Gurgaon',

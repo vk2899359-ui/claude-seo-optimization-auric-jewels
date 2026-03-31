@@ -83,6 +83,7 @@ export default function HomePage() {
               <li><a href="/categories/bracelets">Bracelets</a></li>
               <li><a href="/categories/bangles">Bangles</a></li>
               <li><a href="/categories/pendants">Pendants</a></li>
+              <li><a href="/categories/chains">Gold Chains</a></li>
               <li><a href="/categories/mangalsutra">Mangalsutra</a></li>
               <li><a href="/categories/nose-pins">Nose Pins</a></li>
             </ul>
