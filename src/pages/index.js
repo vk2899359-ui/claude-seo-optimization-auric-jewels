@@ -28,7 +28,7 @@ const structuredData = {
     addressCountry: 'IN',
   },
   priceRange: '\u20B9\u20B9\u20B9',
-  telephone: '[add your phone number]',
+  telephone: '+91-9012495941',
   openingHours: 'Mo-Su 10:00-20:00',
 };
 
