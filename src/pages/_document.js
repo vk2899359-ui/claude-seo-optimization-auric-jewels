@@ -12,6 +12,18 @@ export default function Document() {
         <link rel="icon" href="/favicon.ico" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Google Analytics 4 — G-5C09XPPJ66 */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-5C09XPPJ66" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-5C09XPPJ66');
+            `,
+          }}
+        />
       </Head>
       <body>
         <Main />
