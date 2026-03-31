@@ -1,0 +1,66 @@
+/* Base SEO-friendly styles — ensure content is visible to crawlers */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #1a1a1a;
+  line-height: 1.6;
+}
+
+/* H1 must be visible and prominent — critical for SEO */
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  color: #1a1a1a;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+/* Ensure product descriptions have readable typography */
+.product-description {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #333;
+  max-width: 720px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Category page grid */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem 0;
+}
+
+/* Breadcrumbs for SEO navigation */
+.breadcrumbs {
+  padding: 1rem 0;
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.breadcrumbs a {
+  color: #8B6914;
+  text-decoration: none;
+}
+
+.breadcrumbs a:hover {
+  text-decoration: underline;
+}
