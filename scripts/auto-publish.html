@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Auric Jewels — Auto Publish 14 Blog Articles</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#0B1F3A;color:#F5F1E8;padding:2rem;min-height:100vh}
+h1{font-size:1.5rem;margin-bottom:.5rem;color:#C9A14A}
+.sub{color:rgba(245,241,232,.5);margin-bottom:2rem;font-size:.9rem}
+#start{background:linear-gradient(135deg,#C9A14A,#D4B56A);color:#0B1F3A;border:none;padding:14px 40px;border-radius:50px;font-weight:700;font-size:1rem;cursor:pointer;margin-bottom:2rem}
+#start:hover{box-shadow:0 8px 24px rgba(201,161,74,.4)}
+#start:disabled{opacity:.5;cursor:not-allowed}
+.log{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:1.5rem;max-height:70vh;overflow-y:auto;font-family:'Consolas','Courier New',monospace;font-size:.85rem;line-height:1.8}
+.ok{color:#4ADE80}
+.fail{color:#F87171}
+.info{color:#C9A14A}
+.dim{color:rgba(245,241,232,.4)}
+.summary{margin-top:1.5rem;padding:1rem;background:rgba(201,161,74,.1);border:1px solid rgba(201,161,74,.2);border-radius:8px;font-weight:600}
+</style>
+</head>
+<body>
+
+<h1>Auric Jewels — Bulk Blog Publisher</h1>
+<p class="sub">This will publish 14 SEO blog articles to your JewelsCraft CMS via GraphQL API.</p>
+<button id="start" onclick="run()">Publish All 14 Articles</button>
+<div class="log" id="log"></div>
+
+<script>
+const API = "https://auric.thecodemesh.online/graphql/";
+const TOKEN = "fAPR16BVrzI4thcLtj8c4tUUG1wGU6";
+
+const ARTICLES = [
+  {t:"Solitaire Ring Buying Guide Gurgaon \u2014 Cuts, Clarity & Price 2026",s:"solitaire-ring-buying-guide-gurgaon",mt:"Solitaire Ring Buying Guide Gurgaon \u2014 Cuts, Clarity & Price 2026 | Auric Jewels",md:"Complete solitaire ring buying guide for Gurgaon. Learn about diamond cuts, clarity grades, price ranges & what to ask your jeweller. IGI/GIA certified at Auric Jewels."},
+  {t:"Luxury Bridal Gold Jewellery in Gurgaon \u2014 Complete Wedding Set Guide",s:"luxury-bridal-gold-jewellery-gurgaon",mt:"Luxury Bridal Gold Jewellery in Gurgaon \u2014 Complete Wedding Set Guide | Auric Jewels",md:"Complete bridal gold jewellery guide for Gurgaon brides. Wedding set checklist, 22K vs 18K gold, budget planning & timeline. Visit Auric Jewels showroom."},
+  {t:"How to Choose a Diamond Mangalsutra \u2014 Modern Designs 2026",s:"diamond-mangalsutra-modern-designs",mt:"How to Choose a Diamond Mangalsutra \u2014 Modern Designs 2026 | Auric Jewels",md:"Guide to choosing a modern diamond mangalsutra. Single-line, dual-chain & bracelet styles. Sizing tips, certified diamonds. Shop at Auric Jewels Gurgaon."},
+  {t:"Gold Rate Today in Gurgaon \u2014 Smart Buying Tips",s:"gold-rate-today-gurgaon-buying-tips",mt:"Gold Rate Today in Gurgaon \u2014 Smart Buying Tips for Jewellery Buyers | Auric Jewels",md:"Understand gold rates in Gurgaon before buying jewellery. Learn what drives prices, 22K vs 18K costs, making charges & how to buy smart. Auric Jewels guide."},
+  {t:"Custom Diamond Jewellery in Gurgaon \u2014 From Design to Delivery",s:"custom-diamond-jewellery-gurgaon",mt:"Custom Diamond Jewellery in Gurgaon \u2014 From Design to Delivery | Auric Jewels",md:"Create bespoke diamond jewellery at Auric Jewels Gurgaon. Custom engagement rings, bridal sets & heirloom redesigns. From sketch to certified piece."},
+  {t:"Polki vs Kundan vs Diamond \u2014 Which Bridal Set for Your Wedding?",s:"polki-vs-kundan-vs-diamond-bridal-set",mt:"Polki vs Kundan vs Diamond \u2014 Which Bridal Set for Your Wedding? | Auric Jewels",md:"Compare polki, kundan & diamond bridal jewellery. Brilliance, durability, price & which suits each wedding ceremony. Expert guide from Auric Jewels Gurgaon."},
+  {t:"Best Anniversary Gift Jewellery in Gurgaon \u2014 Luxury Options for Her",s:"anniversary-gift-jewellery-gurgaon",mt:"Best Anniversary Gift Jewellery in Gurgaon \u2014 Luxury Options for Her | Auric Jewels",md:"Find the perfect anniversary jewellery gift at Auric Jewels Gurgaon. Ideas by milestone year, top-gifted pieces & personalisation options. Free gift wrapping."},
+  {t:"Hallmark Gold Jewellery \u2014 How to Check Purity Before Buying in Gurgaon",s:"hallmark-gold-jewellery-purity-guide-gurgaon",mt:"Hallmark Gold Jewellery \u2014 How to Check Purity Before Buying in Gurgaon | Auric Jewels",md:"Learn how to verify BIS hallmark & HUID on gold jewellery. Step-by-step guide to checking gold purity before buying in Gurgaon. Auric Jewels guide."},
+  {t:"Karva Chauth 2026 \u2014 Premium Gold Jewellery Sets in Gurgaon",s:"karva-chauth-gold-jewellery-gurgaon-2026",mt:"Karva Chauth 2026 \u2014 Premium Gold Jewellery Sets in Gurgaon | Auric Jewels",md:"Shop Karva Chauth jewellery gifts at Auric Jewels Gurgaon. Diamond pendants, gold bangles, mangalsutra upgrades & trending styles 2026. Free gift wrapping."},
+  {t:"Solitaire vs Diamond Ring \u2014 What\u2019s the Difference & Which to Buy?",s:"solitaire-vs-diamond-ring-difference",mt:"Solitaire vs Diamond Ring \u2014 What's the Difference & Which to Buy? | Auric Jewels",md:"Understand the difference between solitaire and diamond rings. Compare styles, sparkle, price & occasions. Expert guide from Auric Jewels Gurgaon."},
+  {t:"Men\u2019s Diamond Studs & Platinum Chains \u2014 Trending in Gurgaon 2026",s:"mens-diamond-jewellery-gurgaon-2026",mt:"Men's Diamond Studs & Platinum Chains \u2014 Trending in Gurgaon 2026 | Auric Jewels",md:"Discover men's gold & diamond jewellery trending in Gurgaon. Diamond studs, platinum chains, bracelets & rings for men. Shop at Auric Jewels."},
+  {t:"Engagement Ring Shopping in Gurgaon \u2014 Complete Guide for Couples",s:"engagement-ring-shopping-gurgaon",mt:"Engagement Ring Shopping in Gurgaon \u2014 Complete Guide for Couples | Auric Jewels",md:"Complete engagement ring shopping guide for Gurgaon couples. Budget tips, diamond quality, ring styles & what to ask your jeweller. Auric Jewels guide."},
+  {t:"Diamond Earrings for Daily Wear \u2014 Best Designs Under \u20b950,000",s:"diamond-earrings-daily-wear-under-50000",mt:"Diamond Earrings for Daily Wear \u2014 Best Designs Under \u20b950,000 | Auric Jewels",md:"Shop daily wear diamond earrings under Rs 50,000 at Auric Jewels Gurgaon. Studs, hoops & drops in 18K gold. Certified diamonds. Free shipping."},
+  {t:"Why BIS Hallmark Matters \u2014 Gold Jewellery Buying Guide Gurgaon",s:"bis-hallmark-gold-jewellery-buying-guide",mt:"Why BIS Hallmark Matters \u2014 Gold Jewellery Buying Guide Gurgaon | Auric Jewels",md:"Why BIS hallmark is essential when buying gold jewellery in Gurgaon. What HUID means, how to verify purity & red flags to avoid. Auric Jewels guide."},
+];
+
+const log = document.getElementById("log");
+const btn = document.getElementById("start");
+
+function out(msg, cls="") {
+  log.innerHTML += `<div class="${cls}">${msg}</div>`;
+  log.scrollTop = log.scrollHeight;
+}
+
+async function gql(query, variables) {
+  const body = {query};
+  if (variables) body.variables = variables;
+  const r = await fetch(API, {
+    method: "POST",
+    headers: {"Content-Type":"application/json","Authorization":"Bearer "+TOKEN},
+    body: JSON.stringify(body)
+  });
+  return r.json();
+}
+
+async function introspect() {
+  out("Step 1: Introspecting GraphQL schema...", "info");
+  const r = await gql(`{ __schema { mutationType { fields { name args { name type { name kind ofType { name kind ofType { name } } } } } } queryType { fields { name } } } }`);
+  if (r.errors) { out("Schema error: " + r.errors[0].message, "fail"); return null; }
+  const muts = r?.data?.__schema?.mutationType?.fields || [];
+  const queries = r?.data?.__schema?.queryType?.fields || [];
+  out(`Found ${muts.length} mutations, ${queries.length} queries`, "dim");
+  muts.forEach(m => {
+    const args = m.args.map(a => a.name).join(", ");
+    out(`  mutation: ${m.name}(${args})`, "dim");
+  });
+  return muts;
+}
+
+async function tryPublish(article, mutationName) {
+  const input = {
+    title: article.t, slug: article.s,
+    metaTitle: article.mt, metaDescription: article.md,
+    status: "published"
+  };
+
+  // Pattern 1: input object with CreateBlogInput
+  try {
+    let r = await gql(
+      `mutation($input: CreateBlogInput!) { ${mutationName}(input: $input) { id slug title } }`,
+      {input}
+    );
+    if (r.data && !r.errors) return {ok: true, data: r.data};
+  } catch(e) {}
+
+  // Pattern 2: input object with BlogInput
+  try {
+    let r = await gql(
+      `mutation($input: BlogInput!) { ${mutationName}(input: $input) { id slug title } }`,
+      {input}
+    );
+    if (r.data && !r.errors) return {ok: true, data: r.data};
+  } catch(e) {}
+
+  // Pattern 3: data arg
+  try {
+    let r = await gql(
+      `mutation($data: CreateBlogInput!) { ${mutationName}(data: $data) { id slug title } }`,
+      {data: input}
+    );
+    if (r.data && !r.errors) return {ok: true, data: r.data};
+  } catch(e) {}
+
+  // Pattern 4: direct args
+  try {
+    let r = await gql(`mutation {
+      ${mutationName}(
+        title: ${JSON.stringify(article.t)},
+        slug: ${JSON.stringify(article.s)},
+        metaTitle: ${JSON.stringify(article.mt)},
+        metaDescription: ${JSON.stringify(article.md)},
+        status: "published"
+      ) { id slug title }
+    }`);
+    if (r.data && !r.errors) return {ok: true, data: r.data};
+    return {ok: false, error: r.errors?.[0]?.message || JSON.stringify(r)};
+  } catch(e) {
+    return {ok: false, error: e.message};
+  }
+}
+
+async function run() {
+  btn.disabled = true;
+  log.innerHTML = "";
+  out("Auric Jewels — Publishing 14 Blog Articles", "info");
+  out("API: " + API, "dim");
+  out("", "");
+
+  const muts = await introspect();
+  if (!muts) { btn.disabled = false; return; }
+
+  // Find best mutation
+  let mutName = "createBlog";
+  for (const m of muts) {
+    const n = m.name.toLowerCase();
+    if (n.includes("blog") || n.includes("post") || n.includes("article")) {
+      mutName = m.name;
+      if (n.startsWith("create")) break;
+    }
+  }
+  out(`\nUsing mutation: ${mutName}`, "info");
+  out("", "");
+
+  let ok = 0, fail = 0;
+
+  for (let i = 0; i < ARTICLES.length; i++) {
+    const a = ARTICLES[i];
+    out(`[${i+1}/14] ${a.t.substring(0,65)}...`, "");
+
+    const result = await tryPublish(a, mutName);
+
+    if (result.ok) {
+      out(`  \u2714 Published \u2192 auricjewels.com/blog/${a.s}`, "ok");
+      ok++;
+    } else {
+      out(`  \u2718 Failed: ${result.error?.substring(0,150)}`, "fail");
+      fail++;
+    }
+
+    // 500ms delay between requests
+    await new Promise(r => setTimeout(r, 500));
+  }
+
+  out("", "");
+  out(`\u2550`.repeat(50), "dim");
+  const summary = `Done: ${ok} published, ${fail} failed out of 14`;
+  out(summary, ok === 14 ? "ok" : "info");
+
+  if (fail > 0) {
+    out("\nFor failed articles, paste the HTML content manually into your CMS admin panel.", "dim");
+    out("The HTML for each article was provided in the conversation.", "dim");
+  }
+
+  btn.disabled = false;
+}
+</script>
+</body>
+</html>
