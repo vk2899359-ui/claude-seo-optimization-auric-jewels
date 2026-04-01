@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Auric Jewels — Publish All 14 Blog Articles</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#0B1F3A;color:#F5F1E8;padding:2rem;min-height:100vh}
+h1{font-size:1.5rem;margin-bottom:.5rem;color:#C9A14A}
+.sub{color:rgba(245,241,232,.5);margin-bottom:1.5rem;font-size:.9rem}
+.warn{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);border-radius:8px;padding:1rem;margin-bottom:1.5rem;font-size:.85rem;color:#FCA5A5}
+#start{background:linear-gradient(135deg,#C9A14A,#D4B56A);color:#0B1F3A;border:none;padding:14px 40px;border-radius:50px;font-weight:700;font-size:1rem;cursor:pointer;margin-bottom:2rem}
+#start:hover{box-shadow:0 8px 24px rgba(201,161,74,.4)}
+#start:disabled{opacity:.5;cursor:not-allowed}
+.log{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:1.5rem;max-height:70vh;overflow-y:auto;font-family:'Consolas','Courier New',monospace;font-size:.82rem;line-height:1.9}
+.ok{color:#4ADE80}.fail{color:#F87171}.info{color:#C9A14A}.dim{color:rgba(245,241,232,.4)}
+.counter{margin-bottom:1rem;font-size:1.1rem;color:#C9A14A;font-weight:600}
+</style>
+</head>
+<body>
+<h1>Auric Jewels — Bulk Blog Publisher</h1>
+<p class="sub">Publishes all 14 SEO blog articles to JewelsCraft CMS via GraphQL API.</p>
+<div class="warn">
+<strong>Important:</strong> Articles 1-2 include full HTML content. Articles 3-14 will publish with title, slug, meta title, meta description, and status only (content should be pasted manually in the CMS editor for those articles, or you can ask Claude to provide each article's HTML for embedding).
+</div>
+<div class="counter" id="counter">Ready to publish 14 articles</div>
+<button id="start" onclick="run()">Publish All 14 Articles</button>
+<div class="log" id="log"></div>
+
+<script src="articles-data.js"></script>
+<script>
+const API="https://auric.thecodemesh.online/graphql/";
+const TOKEN="fAPR16BVrzI4thcLtj8c4tUUG1wGU6";
+const log=document.getElementById("log");
+const counter=document.getElementById("counter");
+const btn=document.getElementById("start");
+
+function out(msg,cls=""){log.innerHTML+=`<div class="${cls}">${msg}</div>`;log.scrollTop=log.scrollHeight}
+
+async function gql(query,variables){
+  const body={query};
+  if(variables)body.variables=variables;
+  const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+TOKEN},body:JSON.stringify(body)});
+  return r.json();
+}
+
+async function introspect(){
+  out("Step 1: Introspecting GraphQL schema...","info");
+  try{
+    const r=await gql(`{__schema{mutationType{fields{name args{name type{name kind ofType{name kind ofType{name}}}}}}queryType{fields{name}}}}`);
+    if(r.errors){out("Schema error: "+r.errors[0].message,"fail");return null}
+    const muts=(r?.data?.__schema?.mutationType?.fields)||[];
+    out(`Found ${muts.length} mutations:`,"dim");
+    muts.forEach(m=>{const args=m.args.map(a=>a.name).join(", ");out(`  ${m.name}(${args})`,"dim")});
+    return muts;
+  }catch(e){out("Connection error: "+e.message,"fail");return null}
+}
+
+async function tryPublish(article,mutName){
+  const input={title:article.title,slug:article.slug,metaTitle:article.metaTitle,metaDescription:article.metaDescription,status:"published"};
+  if(article.content)input.content=article.content;
+
+  // Pattern 1: CreateBlogInput
+  try{let r=await gql(`mutation($input:CreateBlogInput!){${mutName}(input:$input){id slug title}}`,{input});if(r.data&&!r.errors)return{ok:true,data:r.data}}catch(e){}
+  // Pattern 2: BlogInput
+  try{let r=await gql(`mutation($input:BlogInput!){${mutName}(input:$input){id slug title}}`,{input});if(r.data&&!r.errors)return{ok:true,data:r.data}}catch(e){}
+  // Pattern 3: data arg
+  try{let r=await gql(`mutation($data:CreateBlogInput!){${mutName}(data:$data){id slug title}}`,{data:input});if(r.data&&!r.errors)return{ok:true,data:r.data}}catch(e){}
+  // Pattern 4: CreateSeoPageInput
+  try{let r=await gql(`mutation($input:CreateSeoPageInput!){${mutName}(input:$input){id slug title}}`,{input});if(r.data&&!r.errors)return{ok:true,data:r.data}}catch(e){}
+  // Pattern 5: direct args
+  try{
+    const q=`mutation{${mutName}(title:${JSON.stringify(article.title)},slug:${JSON.stringify(article.slug)},metaTitle:${JSON.stringify(article.metaTitle)},metaDescription:${JSON.stringify(article.metaDescription)},status:"published"${article.content?`,content:${JSON.stringify(article.content)}`:``}){id slug title}}`;
+    let r=await gql(q);
+    if(r.data&&!r.errors)return{ok:true,data:r.data};
+    return{ok:false,error:r.errors?.[0]?.message||JSON.stringify(r).substring(0,200)};
+  }catch(e){return{ok:false,error:e.message}}
+}
+
+async function run(){
+  btn.disabled=true;log.innerHTML="";
+  out("Auric Jewels \u2014 Publishing "+ARTICLES.length+" Blog Articles","info");
+  out("API: "+API,"dim");out("","");
+
+  const muts=await introspect();
+  if(!muts){btn.disabled=false;return}
+
+  let mutName="createBlog";
+  for(const m of muts){
+    const n=m.name.toLowerCase();
+    if(n.includes("blog")||n.includes("post")||n.includes("article")||n.includes("seopage")||n.includes("page")){
+      mutName=m.name;
+      if(n.startsWith("create"))break;
+    }
+  }
+  out(`\nUsing mutation: ${mutName}`,"info");out("","");
+
+  let ok=0,fail=0;
+  for(let i=0;i<ARTICLES.length;i++){
+    const a=ARTICLES[i];
+    const hasContent=!!a.content;
+    counter.textContent=`Publishing ${i+1}/${ARTICLES.length}...`;
+    out(`[${i+1}/${ARTICLES.length}] ${a.title.substring(0,65)}... ${hasContent?'(with content)':'(metadata only)'}`,"");
+
+    const result=await tryPublish(a,mutName);
+    if(result.ok){out(`  \u2714 Published \u2192 auricjewels.com/blog/${a.slug}`,"ok");ok++}
+    else{out(`  \u2718 Failed: ${(result.error||'Unknown error').substring(0,200)}`,"fail");fail++}
+
+    await new Promise(r=>setTimeout(r,500));
+  }
+
+  out("","");out("\u2550".repeat(50),"dim");
+  const msg=`Done: ${ok} published, ${fail} failed out of ${ARTICLES.length}`;
+  out(msg,ok===ARTICLES.length?"ok":"info");
+  counter.textContent=msg;
+  if(fail>0)out("\nFor failed articles: check mutation name above, or paste content manually in CMS admin.","dim");
+  btn.disabled=false;
+}
+</script>
+</body>
+</html>
