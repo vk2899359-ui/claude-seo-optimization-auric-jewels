@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Auric Jewels — Fix Blog Metadata</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#0B1F3A;color:#F5F1E8;padding:2rem;min-height:100vh}
+h1{font-size:1.4rem;margin-bottom:.5rem;color:#C9A14A}
+.sub{color:rgba(245,241,232,.5);margin-bottom:1.5rem;font-size:.9rem}
+button{background:linear-gradient(135deg,#C9A14A,#D4B56A);color:#0B1F3A;border:none;padding:12px 32px;border-radius:50px;font-weight:700;font-size:.95rem;cursor:pointer;margin:0 .5rem .5rem 0}
+button:hover{box-shadow:0 8px 24px rgba(201,161,74,.4)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.log{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:1.5rem;max-height:70vh;overflow-y:auto;font-family:'Consolas','Courier New',monospace;font-size:.82rem;line-height:1.9;margin-top:1rem}
+.ok{color:#4ADE80}.fail{color:#F87171}.info{color:#C9A14A}.dim{color:rgba(245,241,232,.4)}.warn{color:#FBBF24}
+</style>
+</head>
+<body>
+<h1>Auric Jewels — Fix Blog Metadata + Verify Pages</h1>
+<p class="sub">Step 1: List all pages. Step 2: Add type=blog metadata to new 6 articles. Step 3: Verify.</p>
+<button onclick="listPages()">Step 1: List All Pages</button>
+<button onclick="fixMetadata()">Step 2: Add type=blog to 6 New Blogs</button>
+<button onclick="verifyBlogs()">Step 3: Verify Blog Metadata</button>
+<div class="log" id="log"></div>
+
+<script>
+const API = "https://auric.thecodemesh.online/graphql/";
+const TOKEN = "DpDjidKqKWNnsr9zQarZKsVqnDT97D";
+
+const NEW_SLUGS = [
+  "lightweight-gold-jewellery-working-women-daily-wear",
+  "lab-grown-vs-natural-diamonds-comparison-india",
+  "jewellery-trends-india-2026",
+  "gold-jewellery-investment-2026-gurgaon",
+  "platinum-jewellery-men-gurgaon",
+  "layered-necklace-styling-guide-indian-women"
+];
+
+const log = document.getElementById("log");
+function out(msg, cls) { log.innerHTML += '<div class="'+(cls||'')+'">' + msg + '</div>'; log.scrollTop = log.scrollHeight; }
+function esc(s) { return (s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+async function gql(query, variables) {
+  const body = { query };
+  if (variables) body.variables = variables;
+  const r = await fetch(API, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + TOKEN },
+    body: JSON.stringify(body)
+  });
+  return r.json();
+}
+
+// Step 1: List all pages
+async function listPages() {
+  log.innerHTML = "";
+  out("Fetching all pages...", "info");
+
+  const r = await gql(`{
+    pages(first: 100) {
+      edges {
+        node {
+          id
+          title
+          slug
+          isPublished
+          metadata { key value }
+        }
+      }
+    }
+  }`);
+
+  if (r.errors) { out("Error: " + r.errors[0].message, "fail"); return; }
+
+  const pages = r.data?.pages?.edges || [];
+  out("Total pages: " + pages.length, "info");
+  out("", "");
+
+  // Show new blog pages first
+  out("=== NEW 6 BLOG PAGES ===", "info");
+  let found = 0;
+  for (const slug of NEW_SLUGS) {
+    const page = pages.find(p => p.node.slug === slug);
+    if (page) {
+      const meta = page.node.metadata || [];
+      const typeMeta = meta.find(m => m.key === "type");
+      const hasType = typeMeta ? typeMeta.value : "NOT SET";
+      const status = typeMeta?.value === "blog" ? "ok" : "warn";
+      out(esc(page.node.title), status);
+      out("&nbsp;&nbsp;ID: " + page.node.id, "dim");
+      out("&nbsp;&nbsp;Slug: " + page.node.slug, "dim");
+      out("&nbsp;&nbsp;Published: " + page.node.isPublished, "dim");
+      out("&nbsp;&nbsp;type metadata: " + hasType, status);
+      out("", "");
+      found++;
+    } else {
+      out("NOT FOUND: " + slug, "fail");
+      out("", "");
+    }
+  }
+  out("Found " + found + " of 6 new blog pages", found === 6 ? "ok" : "fail");
+  out("", "");
+
+  // Show all pages
+  out("=== ALL PAGES ===", "dim");
+  pages.forEach(function(p) {
+    const meta = (p.node.metadata||[]).find(m => m.key === "type");
+    const tag = meta ? " [type=" + meta.value + "]" : "";
+    out(esc(p.node.title) + " (" + p.node.slug + ")" + tag, meta?.value === "blog" ? "ok" : "dim");
+  });
+}
+
+// Step 2: Add type=blog metadata
+async function fixMetadata() {
+  log.innerHTML = "";
+  out("Finding new 6 blog pages and adding type=blog metadata...", "info");
+  out("", "");
+
+  // First get all pages to find IDs
+  const r = await gql(`{ pages(first: 100) { edges { node { id slug metadata { key value } } } } }`);
+  if (r.errors) { out("Error: " + r.errors[0].message, "fail"); return; }
+
+  const pages = r.data?.pages?.edges || [];
+  let fixed = 0, failed = 0;
+
+  for (const slug of NEW_SLUGS) {
+    const page = pages.find(p => p.node.slug === slug);
+    if (!page) {
+      out("NOT FOUND: " + slug, "fail");
+      failed++;
+      continue;
+    }
+
+    const pageId = page.node.id;
+    const existingType = (page.node.metadata||[]).find(m => m.key === "type");
+
+    if (existingType?.value === "blog") {
+      out(slug + " — already has type=blog, skipping", "ok");
+      fixed++;
+      continue;
+    }
+
+    out("Setting type=blog on: " + slug + " (ID: " + pageId + ")", "dim");
+
+    // Try updateMetadata
+    let mr = await gql(`mutation($id: ID!, $input: [MetadataInput!]!) {
+      updateMetadata(id: $id, input: $input) {
+        item { metadata { key value } }
+        errors { field message }
+      }
+    }`, { id: pageId, input: [{ key: "type", value: "blog" }] });
+
+    if (mr.data?.updateMetadata?.item) {
+      out("&nbsp;&nbsp;✔ type=blog added via updateMetadata", "ok");
+      fixed++;
+      continue;
+    }
+
+    // Try updatePrivateMetadata
+    mr = await gql(`mutation($id: ID!, $input: [MetadataInput!]!) {
+      updatePrivateMetadata(id: $id, input: $input) {
+        item { metadata { key value } }
+        errors { field message }
+      }
+    }`, { id: pageId, input: [{ key: "type", value: "blog" }] });
+
+    if (mr.data?.updatePrivateMetadata?.item) {
+      out("&nbsp;&nbsp;✔ type=blog added via updatePrivateMetadata", "ok");
+      fixed++;
+      continue;
+    }
+
+    // Try pageUpdate with metadata
+    mr = await gql(`mutation($id: ID!, $input: PageInput!) {
+      pageUpdate(id: $id, input: $input) {
+        page { id metadata { key value } }
+        errors { field message code }
+      }
+    }`, { id: pageId, input: { metadata: [{ key: "type", value: "blog" }] } });
+
+    if (mr.data?.pageUpdate?.page) {
+      out("&nbsp;&nbsp;✔ type=blog added via pageUpdate", "ok");
+      fixed++;
+      continue;
+    }
+
+    const errMsg = mr.data?.pageUpdate?.errors?.[0]?.message || mr.errors?.[0]?.message || "Unknown";
+    out("&nbsp;&nbsp;✘ Failed: " + esc(errMsg), "fail");
+    failed++;
+  }
+
+  out("", "");
+  out("Done: " + fixed + " fixed, " + failed + " failed", fixed === 6 ? "ok" : "warn");
+}
+
+// Step 3: Verify
+async function verifyBlogs() {
+  log.innerHTML = "";
+  out("Verifying blog metadata on all 6 new pages...", "info");
+  out("", "");
+
+  const r = await gql(`{ pages(first: 100) { edges { node { id title slug isPublished metadata { key value } } } } }`);
+  if (r.errors) { out("Error: " + r.errors[0].message, "fail"); return; }
+
+  const pages = r.data?.pages?.edges || [];
+  let allGood = true;
+
+  for (const slug of NEW_SLUGS) {
+    const page = pages.find(p => p.node.slug === slug);
+    if (!page) {
+      out("✘ NOT FOUND: " + slug, "fail");
+      allGood = false;
+      continue;
+    }
+    const typeMeta = (page.node.metadata||[]).find(m => m.key === "type");
+    if (typeMeta?.value === "blog") {
+      out("✔ " + esc(page.node.title), "ok");
+      out("&nbsp;&nbsp;Published: " + page.node.isPublished + " | type=blog ✔", "ok");
+    } else {
+      out("✘ " + esc(page.node.title) + " — type metadata: " + (typeMeta?.value || "MISSING"), "fail");
+      allGood = false;
+    }
+  }
+
+  out("", "");
+  if (allGood) {
+    out("All 6 blogs are published with type=blog metadata! ✔", "ok");
+    out("", "");
+    out("Blog URLs:", "info");
+    NEW_SLUGS.forEach(function(s) {
+      out("&nbsp;&nbsp;https://www.auricjewels.com/blog/" + s, "ok");
+    });
+  } else {
+    out("Some blogs need attention. Click Step 2 to fix metadata.", "warn");
+  }
+}
+</script>
+</body>
+</html>
