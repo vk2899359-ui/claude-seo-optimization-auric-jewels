@@ -8,13 +8,22 @@ module.exports = {
   transform: async (config, path) => {
     // Higher priority for homepage and category pages
     let priority = config.priority;
-    if (path === '/') priority = 1.0;
-    else if (path.startsWith('/categories/')) priority = 0.9;
-    else if (path.startsWith('/products/')) priority = 0.8;
+    let changefreq = config.changefreq;
+
+    if (path === '/') {
+      priority = 1.0;
+    } else if (path.startsWith('/categories/')) {
+      priority = 0.9;
+    } else if (path.startsWith('/products/')) {
+      priority = 0.8;
+    } else if (path.startsWith('/blog/')) {
+      priority = 0.8;
+      changefreq = 'daily';
+    }
 
     return {
       loc: path,
-      changefreq: config.changefreq,
+      changefreq,
       priority,
       lastmod: new Date().toISOString(),
     };

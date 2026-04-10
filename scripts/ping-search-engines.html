@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auric Jewels - Search Engine Ping & Indexing Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f0eb;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 3px solid #b8860b;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: #8b6914;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: #666;
+            font-size: 15px;
+        }
+
+        .instructions {
+            background: #fff;
+            border: 1px solid #e0d5c5;
+            border-left: 4px solid #b8860b;
+            border-radius: 6px;
+            padding: 20px 24px;
+            margin-bottom: 30px;
+        }
+
+        .instructions h2 {
+            color: #8b6914;
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        .instructions ol {
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .instructions strong {
+            color: #333;
+        }
+
+        .section {
+            background: #fff;
+            border: 1px solid #e0d5c5;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .section h2 {
+            color: #8b6914;
+            font-size: 20px;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e8e0d5;
+        }
+
+        .sitemap-box {
+            background: #faf7f2;
+            border: 1px dashed #c9b896;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .sitemap-box code {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #8b6914;
+            background: #fff;
+            padding: 4px 10px;
+            border-radius: 4px;
+            border: 1px solid #e0d5c5;
+            word-break: break-all;
+        }
+
+        .ping-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-gold {
+            background: #b8860b;
+            color: #fff;
+        }
+
+        .btn-gold:hover {
+            background: #9a7209;
+        }
+
+        .btn-blue {
+            background: #1a73e8;
+            color: #fff;
+        }
+
+        .btn-blue:hover {
+            background: #1557b0;
+        }
+
+        .btn-green {
+            background: #0d8043;
+            color: #fff;
+        }
+
+        .btn-green:hover {
+            background: #0a6636;
+        }
+
+        .btn-outline {
+            background: #fff;
+            color: #8b6914;
+            border: 2px solid #b8860b;
+        }
+
+        .btn-outline:hover {
+            background: #faf7f2;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .url-list {
+            list-style: none;
+        }
+
+        .url-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 10px;
+            transition: background 0.2s;
+        }
+
+        .url-item:hover {
+            background: #faf7f2;
+        }
+
+        .url-info {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .url-number {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: #b8860b;
+            color: #fff;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-right: 10px;
+        }
+
+        .url-text {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #555;
+            word-break: break-all;
+        }
+
+        .url-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .url-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-live {
+            background: #e6f4ea;
+            color: #137333;
+        }
+
+        .status-coming {
+            background: #fef7e0;
+            color: #b06000;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .tool-card {
+            border: 1px solid #e0d5c5;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: box-shadow 0.2s;
+        }
+
+        .tool-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .tool-card h3 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .tool-card p {
+            font-size: 13px;
+            color: #777;
+            margin-bottom: 14px;
+        }
+
+        .log-area {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            padding: 16px;
+            border-radius: 6px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 16px;
+        }
+
+        .log-entry {
+            margin-bottom: 4px;
+        }
+
+        .log-time {
+            color: #6a9955;
+        }
+
+        .log-action {
+            color: #569cd6;
+        }
+
+        .log-url {
+            color: #ce9178;
+        }
+
+        .all-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: #faf7f2;
+            border-radius: 6px;
+            border: 1px solid #e8e0d5;
+        }
+
+        .all-actions span {
+            font-weight: 600;
+            color: #8b6914;
+            margin-right: 6px;
+            display: flex;
+            align-items: center;
+        }
+
+        footer {
+            text-align: center;
+            padding: 24px;
+            color: #999;
+            font-size: 13px;
+            border-top: 1px solid #e0d5c5;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Auric Jewels -- Search Engine Ping & Indexing Tool</h1>
+            <p>Notify search engines about your blog pages and request faster indexing</p>
+        </header>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h2>How to Use This Tool</h2>
+            <ol>
+                <li><strong>Ping Sitemap:</strong> Click the "Ping Google Sitemap" button below to notify Google that your sitemap has been updated. Do this every time you publish a new blog post.</li>
+                <li><strong>Request Indexing:</strong> For each blog URL, click "Inspect in GSC" to open it in Google Search Console's URL Inspection tool. Then click the "Request Indexing" button on that page.</li>
+                <li><strong>Open Blog Page:</strong> Click "Visit Page" to open the blog post in a new tab and verify it is loading correctly.</li>
+                <li><strong>Webmaster Tools:</strong> Use the links at the bottom to access Google Search Console and Bing Webmaster Tools directly.</li>
+            </ol>
+        </div>
+
+        <!-- Sitemap Ping Section -->
+        <div class="section">
+            <h2>Step 1: Ping Your Sitemap</h2>
+            <p style="margin-bottom: 14px; color: #666;">Notify Google that your sitemap has been updated so it crawls your new pages.</p>
+
+            <div class="sitemap-box">
+                <div>
+                    <div style="font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Sitemap URL</div>
+                    <code>https://www.auricjewels.com/sitemap.xml</code>
+                </div>
+                <div class="ping-buttons">
+                    <button class="btn btn-gold" onclick="pingSitemap()">Ping Google Sitemap</button>
+                    <button class="btn btn-outline btn-small" onclick="copySitemapUrl()">Copy URL</button>
+                </div>
+            </div>
+
+            <div id="ping-log" class="log-area" style="display: none;"></div>
+        </div>
+
+        <!-- Blog URLs Section -->
+        <div class="section">
+            <h2>Step 2: Request Indexing for Each Blog Page</h2>
+            <p style="margin-bottom: 14px; color: #666;">Click "Inspect in GSC" for each URL below. On the Google Search Console page that opens, click "Request Indexing" if the page is not yet indexed.</p>
+
+            <div class="all-actions">
+                <span>Bulk Actions:</span>
+                <button class="btn btn-blue btn-small" onclick="openAllInGSC()">Open All in GSC (Live Only)</button>
+                <button class="btn btn-green btn-small" onclick="openAllPages()">Visit All Pages (Live Only)</button>
+                <button class="btn btn-outline btn-small" onclick="copyAllUrls()">Copy All URLs</button>
+            </div>
+
+            <ul class="url-list" id="url-list"></ul>
+        </div>
+
+        <!-- Webmaster Tools Links -->
+        <div class="section">
+            <h2>Step 3: Webmaster Tools</h2>
+            <p style="margin-bottom: 16px; color: #666;">Access search engine webmaster tools to manage your website's presence in search results.</p>
+
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <h3>Google Search Console</h3>
+                    <p>Monitor indexing, check search performance, submit sitemaps, and request indexing.</p>
+                    <a href="https://search.google.com/search-console?resource_id=https%3A%2F%2Fwww.auricjewels.com%2F" target="_blank" class="btn btn-blue">Open Google Search Console</a>
+                </div>
+                <div class="tool-card">
+                    <h3>Bing Webmaster Tools</h3>
+                    <p>Submit your sitemap to Bing and monitor your site's performance on Bing search.</p>
+                    <a href="https://www.bing.com/webmasters/home" target="_blank" class="btn btn-blue">Open Bing Webmaster Tools</a>
+                </div>
+                <div class="tool-card">
+                    <h3>Google Business Profile</h3>
+                    <p>Create posts with blog links for faster indexing and local SEO benefits.</p>
+                    <a href="https://business.google.com/" target="_blank" class="btn btn-green">Open Google Business</a>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            Auric Jewels SEO Tool | www.auricjewels.com | For internal use only
+        </footer>
+    </div>
+
+    <script>
+        // Blog URLs configuration
+        const blogUrls = [
+            {
+                slug: "lightweight-gold-jewellery-working-women-daily-wear",
+                title: "Lightweight Gold Jewellery for Working Women",
+                status: "live"
+            },
+            {
+                slug: "lab-grown-vs-natural-diamonds-comparison-india",
+                title: "Lab-Grown vs Natural Diamonds Comparison",
+                status: "live"
+            },
+            {
+                slug: "jewellery-trends-india-2026",
+                title: "Jewellery Trends India 2026",
+                status: "live"
+            },
+            {
+                slug: "gold-jewellery-investment-2026-gurgaon",
+                title: "Gold Jewellery Investment 2026 Gurgaon",
+                status: "live"
+            },
+            {
+                slug: "platinum-jewellery-men-gurgaon",
+                title: "Platinum Jewellery for Men Gurgaon",
+                status: "live"
+            },
+            {
+                slug: "layered-necklace-styling-guide-indian-women",
+                title: "Layered Necklace Styling Guide",
+                status: "live"
+            },
+            {
+                slug: "akshaya-tritiya-gold-buying-guide-2026-gurgaon",
+                title: "Akshaya Tritiya Gold Buying Guide 2026",
+                status: "coming"
+            },
+            {
+                slug: "bridal-jewellery-set-guide-indian-bride-2026",
+                title: "Bridal Jewellery Set Guide 2026",
+                status: "coming"
+            },
+            {
+                slug: "solitaire-diamond-ring-buying-guide-gurgaon",
+                title: "Solitaire Diamond Ring Buying Guide",
+                status: "coming"
+            },
+            {
+                slug: "gold-rate-today-gurgaon-2026-price-trends",
+                title: "Gold Rate Today Gurgaon 2026 Price Trends",
+                status: "coming"
+            }
+        ];
+
+        const SITE_URL = "https://www.auricjewels.com";
+        const SITEMAP_URL = SITE_URL + "/sitemap.xml";
+        const GSC_INSPECT_BASE = "https://search.google.com/search-console/inspect?resource_id=" + encodeURIComponent(SITE_URL + "/") + "&id=";
+
+        // Render the URL list
+        function renderUrlList() {
+            const list = document.getElementById("url-list");
+            list.innerHTML = "";
+
+            blogUrls.forEach((blog, index) => {
+                const fullUrl = SITE_URL + "/blog/" + blog.slug;
+                const gscUrl = GSC_INSPECT_BASE + encodeURIComponent(fullUrl);
+                const statusClass = blog.status === "live" ? "status-live" : "status-coming";
+                const statusText = blog.status === "live" ? "Live" : "Coming Soon";
+
+                const li = document.createElement("li");
+                li.className = "url-item";
+                li.innerHTML = `
+                    <div class="url-info">
+                        <div class="url-label">
+                            <span class="url-number">${index + 1}</span>
+                            ${blog.title}
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="url-text">${fullUrl}</div>
+                    </div>
+                    <div class="url-actions">
+                        <a href="${gscUrl}" target="_blank" class="btn btn-blue btn-small" title="Open in Google Search Console URL Inspection">Inspect in GSC</a>
+                        <a href="${fullUrl}" target="_blank" class="btn btn-green btn-small" title="Open blog page in new tab">Visit Page</a>
+                        <button class="btn btn-outline btn-small" onclick="copyToClipboard('${fullUrl}')" title="Copy URL to clipboard">Copy</button>
+                    </div>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        // Ping sitemap
+        function pingSitemap() {
+            const pingUrl = "https://www.google.com/ping?sitemap=" + encodeURIComponent(SITEMAP_URL);
+            addLog("Pinging Google sitemap...", SITEMAP_URL);
+            window.open(pingUrl, "_blank");
+            addLog("Ping request sent!", "Google should re-crawl the sitemap shortly.");
+        }
+
+        // Copy sitemap URL
+        function copySitemapUrl() {
+            copyToClipboard(SITEMAP_URL);
+        }
+
+        // Copy to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                addLog("Copied to clipboard:", text);
+            }).catch(() => {
+                // Fallback for older browsers
+                const textarea = document.createElement("textarea");
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textarea);
+                addLog("Copied to clipboard:", text);
+            });
+        }
+
+        // Open all live URLs in Google Search Console
+        function openAllInGSC() {
+            const liveUrls = blogUrls.filter(b => b.status === "live");
+            if (!confirm("This will open " + liveUrls.length + " tabs in Google Search Console. Continue?")) return;
+
+            liveUrls.forEach((blog, index) => {
+                const fullUrl = SITE_URL + "/blog/" + blog.slug;
+                const gscUrl = GSC_INSPECT_BASE + encodeURIComponent(fullUrl);
+                setTimeout(() => {
+                    window.open(gscUrl, "_blank");
+                    addLog("Opened in GSC:", blog.title);
+                }, index * 1500); // Stagger to avoid popup blockers
+            });
+        }
+
+        // Open all live blog pages
+        function openAllPages() {
+            const liveUrls = blogUrls.filter(b => b.status === "live");
+            if (!confirm("This will open " + liveUrls.length + " blog pages in new tabs. Continue?")) return;
+
+            liveUrls.forEach((blog, index) => {
+                const fullUrl = SITE_URL + "/blog/" + blog.slug;
+                setTimeout(() => {
+                    window.open(fullUrl, "_blank");
+                    addLog("Opened page:", blog.title);
+                }, index * 800);
+            });
+        }
+
+        // Copy all URLs
+        function copyAllUrls() {
+            const allUrls = blogUrls.map(b => SITE_URL + "/blog/" + b.slug).join("\n");
+            copyToClipboard(allUrls);
+            addLog("All URLs copied!", blogUrls.length + " URLs copied to clipboard.");
+        }
+
+        // Logging
+        function addLog(action, detail) {
+            const logArea = document.getElementById("ping-log");
+            logArea.style.display = "block";
+
+            const now = new Date();
+            const time = now.toLocaleTimeString();
+
+            const entry = document.createElement("div");
+            entry.className = "log-entry";
+            entry.innerHTML = `<span class="log-time">[${time}]</span> <span class="log-action">${action}</span> <span class="log-url">${detail}</span>`;
+
+            logArea.appendChild(entry);
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        // Initialize on page load
+        renderUrlList();
+    </script>
+</body>
+</html>
