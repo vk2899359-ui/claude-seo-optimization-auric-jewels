@@ -25,7 +25,7 @@ import urllib.error
 
 # ── Configuration ────────────────────────────────────────────
 API_ENDPOINT = "https://auric.thecodemesh.online/graphql/"
-AUTH_TOKEN = "fAPR16BVrzI4thcLtj8c4tUUG1wGU6"
+AUTH_TOKEN = "DpDjidKqKWNnsr9zQarZKsVqnDT97D"
 PAGE_TYPE_ID = "UGFnZVR5cGU6Ng=="
 
 CONTENT_DIR = os.path.join(
