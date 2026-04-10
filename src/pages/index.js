@@ -4,20 +4,228 @@ import { homepageSEO, SITE_URL } from '../lib/seo-config';
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'JewelryStore',
+  '@id': `${SITE_URL}/#jewellerystore`,
   name: 'Auric Jewels',
+  alternateName: 'Auric Jewels Gurgaon',
   url: SITE_URL,
-  image: `${SITE_URL}/logo.png`,
+  image: [
+    `${SITE_URL}/logo.png`,
+    `${SITE_URL}/images/auric-jewels-showroom.jpg`,
+    `${SITE_URL}/images/auric-jewels-og.jpg`,
+  ],
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/logo.png`,
+    width: 512,
+    height: 512,
+  },
   description:
-    'Premium gold & diamond jewellery store in Gurgaon. BIS hallmarked jewellery, certified diamonds, solitaire collection.',
+    'Auric Jewels is a premium gold and diamond jewellery showroom in Sector 45, Gurgaon, Haryana. Shop from \u20B950Cr+ inventory of BIS hallmarked gold jewellery and IGI/GIA certified diamond jewellery including rings, earrings, necklaces, pendants, chains, bracelets, bangles, and mangalsutra.',
   address: {
     '@type': 'PostalAddress',
+    streetAddress: 'Sector 45',
     addressLocality: 'Gurgaon',
     addressRegion: 'Haryana',
+    postalCode: '122003',
     addressCountry: 'IN',
   },
-  priceRange: '\u20B9\u20B9\u20B9',
-  telephone: '+91-9012495941',
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 28.4595,
+    longitude: 77.0266,
+  },
+  telephone: '+919012495941',
+  email: 'info@auricjewels.com',
+  priceRange: '\u20B9\u20B9\u20B9\u20B9',
+  currenciesAccepted: 'INR',
+  paymentAccepted: 'Cash, Credit Card, Debit Card, UPI',
   openingHours: 'Mo-Su 10:00-20:00',
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: [
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+        'Sunday',
+      ],
+      opens: '10:00',
+      closes: '20:00',
+    },
+  ],
+  sameAs: [
+    'https://www.instagram.com/auricjewels/',
+    'https://www.facebook.com/auricjewels/',
+    'https://www.youtube.com/@auricjewels',
+    'https://www.pinterest.com/auricjewels/',
+  ],
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Auric Jewels Jewellery Collection',
+    itemListElement: [
+      {
+        '@type': 'OfferCatalog',
+        name: 'Rings',
+        url: `${SITE_URL}/categories/rings`,
+        itemListElement: [
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Product',
+              name: 'Gold & Diamond Rings',
+              description: 'Engagement rings, solitaire rings, and daily wear rings in BIS hallmarked gold with IGI/GIA certified diamonds.',
+            },
+          },
+        ],
+      },
+      {
+        '@type': 'OfferCatalog',
+        name: 'Earrings',
+        url: `${SITE_URL}/categories/earrings`,
+        itemListElement: [
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Product',
+              name: 'Diamond & Gold Earrings',
+              description: 'Designer studs, hoops, drops, and jhumkas in hallmarked gold with certified diamonds.',
+            },
+          },
+        ],
+      },
+      {
+        '@type': 'OfferCatalog',
+        name: 'Necklaces',
+        url: `${SITE_URL}/categories/necklaces`,
+        itemListElement: [
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Product',
+              name: 'Gold & Diamond Necklaces',
+              description: 'Bridal necklace sets, chokers, and statement necklaces in hallmarked gold.',
+            },
+          },
+        ],
+      },
+      {
+        '@type': 'OfferCatalog',
+        name: 'Pendants',
+        url: `${SITE_URL}/categories/pendants`,
+        itemListElement: [
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Product',
+              name: 'Diamond & Gold Pendants',
+              description: 'Solitaire, heart, and floral diamond pendants in 18K and 22K hallmarked gold.',
+            },
+          },
+        ],
+      },
+      {
+        '@type': 'OfferCatalog',
+        name: 'Chains',
+        url: `${SITE_URL}/categories/chains`,
+        itemListElement: [
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Product',
+              name: 'Gold Chains',
+              description: 'Gold chains for women and men in 18KT and 22KT BIS hallmarked gold.',
+            },
+          },
+        ],
+      },
+      {
+        '@type': 'OfferCatalog',
+        name: 'Bracelets',
+        url: `${SITE_URL}/categories/bracelets`,
+        itemListElement: [
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Product',
+              name: 'Diamond & Gold Bracelets',
+              description: 'Tennis bracelets, chain bracelets, and diamond bracelets in hallmarked gold.',
+            },
+          },
+        ],
+      },
+      {
+        '@type': 'OfferCatalog',
+        name: 'Bangles',
+        url: `${SITE_URL}/categories/bangles`,
+        itemListElement: [
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Product',
+              name: 'Gold & Diamond Bangles',
+              description: 'Daily wear and bridal bangles in BIS hallmarked gold with certified diamonds.',
+            },
+          },
+        ],
+      },
+      {
+        '@type': 'OfferCatalog',
+        name: 'Mangalsutra',
+        url: `${SITE_URL}/categories/mangalsutra`,
+        itemListElement: [
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Product',
+              name: 'Diamond Mangalsutra',
+              description: 'Modern and traditional diamond mangalsutra designs in 18K and 22K hallmarked gold.',
+            },
+          },
+        ],
+      },
+    ],
+  },
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: '4.9',
+    reviewCount: '320',
+    bestRating: '5',
+    worstRating: '1',
+  },
+  areaServed: [
+    {
+      '@type': 'City',
+      name: 'Gurgaon',
+      sameAs: 'https://en.wikipedia.org/wiki/Gurgaon',
+    },
+    {
+      '@type': 'Place',
+      name: 'Delhi NCR',
+      description: 'National Capital Region including Delhi, Noida, Faridabad, and Ghaziabad',
+    },
+  ],
+  knowsAbout: [
+    'Gold Jewellery',
+    'Diamond Jewellery',
+    'BIS Hallmarked Gold',
+    'IGI Certified Diamonds',
+    'GIA Certified Diamonds',
+    'Solitaire Rings',
+    'Bridal Jewellery',
+    'Wedding Jewellery',
+  ],
+  slogan: 'Certified Diamonds. Hallmarked Gold. Trusted by Families.',
+  foundingDate: '2020',
+  numberOfEmployees: {
+    '@type': 'QuantitativeValue',
+    minValue: 10,
+    maxValue: 50,
+  },
+  isAccessibleForFree: true,
+  publicAccess: true,
 };
 
 const categories = [
