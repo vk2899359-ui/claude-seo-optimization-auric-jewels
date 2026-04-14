@@ -278,8 +278,11 @@ function renderContacts(conversations) {
 
   list.innerHTML = filtered.map(c => {
     const isActive = currentPhone === c.phone ? ' active' : '';
+    const displayName = c.contact.customerName ? esc(c.contact.customerName) : esc(formatPhone(c.phone));
+    const subtitle = c.contact.customerName ? '<span style="color:var(--text-dim);font-size:0.75rem;">' + esc(formatPhone(c.phone)) + '</span><br>' : '';
     return '<div class="contact-item' + isActive + '" onclick="selectContact(\\'' + c.phone + '\\')">' +
-      '<div class="contact-phone">' + esc(formatPhone(c.phone)) + '</div>' +
+      '<div class="contact-phone">' + displayName + '</div>' +
+      subtitle +
       '<div class="contact-preview">' + esc(c.contact.lastMessagePreview) + '</div>' +
       '<div class="contact-meta">' +
         '<span class="contact-time">' + formatTime(c.contact.lastMessageTime) + '</span>' +

@@ -1,33 +1,46 @@
 // Storage module: Vercel KV with in-memory fallback
-let kv = null;
-let useMemory = false;
+let kvClient = null;
+let kvInitialized = false;
 
-// In-memory fallback store (resets on cold starts)
+// In-memory fallback store (resets on cold starts — only useful for local dev)
 const memoryStore = new Map();
 
-async function getKV() {
-  if (kv) return kv;
-  if (useMemory) return null;
+function getKV() {
+  if (kvInitialized) return kvClient;
+  kvInitialized = true;
+
+  const url = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
+
+  if (!url || !token) {
+    console.warn('KV credentials missing (need KV_REST_API_URL + KV_REST_API_TOKEN) — using in-memory storage');
+    return null;
+  }
 
   try {
-    if (!process.env.KV_REST_API_URL) {
-      console.warn('KV not configured, using in-memory storage');
-      useMemory = true;
+    const vercelKv = require('@vercel/kv');
+    if (typeof vercelKv.createClient === 'function') {
+      kvClient = vercelKv.createClient({ url, token });
+    } else {
+      kvClient = vercelKv.kv || (vercelKv.default && vercelKv.default.kv) || null;
+    }
+
+    if (!kvClient) {
+      console.error('Could not initialize @vercel/kv client — using in-memory storage');
       return null;
     }
-    const kvModule = await import('@vercel/kv');
-    kv = kvModule.kv;
-    return kv;
+
+    console.log('Vercel KV storage initialized successfully');
+    return kvClient;
   } catch (err) {
-    console.warn('KV not configured, using in-memory storage:', err.message);
-    useMemory = true;
+    console.error('Failed to load @vercel/kv:', err.message, '— using in-memory storage');
     return null;
   }
 }
 
 // Generic get/set wrappers
 async function kvGet(key) {
-  const store = await getKV();
+  const store = getKV();
   if (store) {
     return await store.get(key);
   }
@@ -35,7 +48,7 @@ async function kvGet(key) {
 }
 
 async function kvSet(key, value) {
-  const store = await getKV();
+  const store = getKV();
   if (store) {
     await store.set(key, value);
   } else {
@@ -44,14 +57,16 @@ async function kvSet(key, value) {
 }
 
 // Store a conversation pair (customer message + bot reply)
-async function storeConversation({ phone, customerMessage, botReply, messageType = 'text' }) {
+async function storeConversation({ phone, customerName, customerMessage, botReply, messageType = 'text' }) {
   const timestamp = Date.now();
   const entry = {
     timestamp,
     phone,
+    customerName: customerName || '',
     customerMessage,
     botReply,
     messageType,
+    status: 'replied',
     date: new Date(timestamp).toISOString(),
   };
 
@@ -65,6 +80,7 @@ async function storeConversation({ phone, customerMessage, botReply, messageType
   const contacts = (await kvGet('contacts')) || {};
   contacts[phone] = {
     phone,
+    customerName: customerName || contacts[phone]?.customerName || '',
     lastMessageTime: timestamp,
     lastMessagePreview: customerMessage.substring(0, 80),
     messageCount: (contacts[phone]?.messageCount || 0) + 1,

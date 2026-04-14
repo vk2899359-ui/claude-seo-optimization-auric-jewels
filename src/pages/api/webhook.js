@@ -52,9 +52,18 @@ module.exports = async function handler(req, res) {
           const messages = value.messages;
           const contacts = value.contacts || [];
 
+          // Build a phone→name lookup from the contacts array
+          const contactNames = {};
+          for (const c of contacts) {
+            if (c.wa_id && c.profile?.name) {
+              contactNames[c.wa_id] = c.profile.name;
+            }
+          }
+
           for (const message of messages) {
             const from = message.from; // customer phone number
             const messageType = message.type || 'text';
+            const customerName = contactNames[from] || '';
 
             // Skip messages from the bot's own number to prevent reply loops
             if (from === BOT_PHONE_NUMBER) {
@@ -103,11 +112,12 @@ module.exports = async function handler(req, res) {
             try {
               await storeConversation({
                 phone: from,
+                customerName,
                 customerMessage,
                 botReply,
                 messageType,
               });
-              console.log('Conversation stored for', from);
+              console.log('Conversation stored for', from, customerName ? `(${customerName})` : '');
             } catch (err) {
               console.error('Storage error:', err.message);
               // Don't fail the webhook if storage fails
