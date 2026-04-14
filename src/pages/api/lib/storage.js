@@ -143,4 +143,9 @@ async function getStats() {
   };
 }
 
-module.exports = { storeConversation, getContacts, getMessages, getAllConversations, getStats };
+// Simplified storeMessage wrapper: (from, userText, reply)
+async function storeMessage(from, userText, reply) {
+  return storeConversation({ phone: from, customerMessage: userText, botReply: reply });
+}
+
+module.exports = { storeConversation, storeMessage, getContacts, getMessages, getAllConversations, getStats };

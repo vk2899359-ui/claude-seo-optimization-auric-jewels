@@ -1,4 +1,5 @@
 const { storeConversation } = require('./lib/storage');
+const { storeMessage } = require('./lib/storage');
 
 // Environment variables expected:
 //   WHATSAPP_VERIFY_TOKEN  — Meta webhook verification token
@@ -82,6 +83,13 @@ module.exports = async function handler(req, res) {
               await sendWhatsAppMessage(from, botReply);
             } catch (err) {
               console.error('WhatsApp send error:', err.message);
+            }
+
+            // Store message after send
+            try {
+              await storeMessage(from, customerMessage, botReply);
+            } catch (err) {
+              console.error('storeMessage error:', err.message);
             }
 
             // Store conversation in KV (dashboard storage)
