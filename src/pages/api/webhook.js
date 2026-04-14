@@ -10,6 +10,7 @@ const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || 'auric_verify_token';
 const ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN;
 const PHONE_ID = process.env.WHATSAPP_PHONE_ID;
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+const BOT_PHONE_NUMBER = process.env.BOT_PHONE_NUMBER || '9012495941';
 
 module.exports = async function handler(req, res) {
   // GET: Meta webhook verification
@@ -39,6 +40,13 @@ module.exports = async function handler(req, res) {
         const changes = entry.changes || [];
         for (const change of changes) {
           const value = change.value;
+
+          // Skip status update webhooks (sent/delivered/read receipts)
+          if (value?.statuses) {
+            console.log('Skipping status update webhook');
+            continue;
+          }
+
           if (!value?.messages) continue;
 
           const messages = value.messages;
@@ -47,6 +55,13 @@ module.exports = async function handler(req, res) {
           for (const message of messages) {
             const from = message.from; // customer phone number
             const messageType = message.type || 'text';
+
+            // Skip messages from the bot's own number to prevent reply loops
+            if (from === BOT_PHONE_NUMBER) {
+              console.log('Skipping message from bot itself:', from);
+              continue;
+            }
+
             let customerMessage = '';
 
             // Extract message text based on type
