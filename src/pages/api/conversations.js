@@ -1,4 +1,4 @@
-const { getContacts, getMessages, getAllConversations, getStats } = require('./lib/storage');
+const { getContacts, getMessages, getAllConversations, getStats, getStorageStatus } = require('./lib/storage');
 
 const PASSWORD = 'auric2026';
 
@@ -41,6 +41,7 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({
       stats,
       conversations,
+      _storage: getStorageStatus(),
     });
   } catch (err) {
     console.error('Conversations API error:', err);

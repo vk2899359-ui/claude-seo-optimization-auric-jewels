@@ -1,6 +1,7 @@
-// Storage module: Vercel KV with in-memory fallback
+// Storage module: Vercel KV / Upstash Redis with in-memory fallback
 let kvClient = null;
 let kvInitialized = false;
+let storageBackend = 'none'; // 'kv', 'memory', or 'none'
 
 // In-memory fallback store (resets on cold starts — only useful for local dev)
 const memoryStore = new Map();
@@ -9,40 +10,61 @@ function getKV() {
   if (kvInitialized) return kvClient;
   kvInitialized = true;
 
-  const url = process.env.KV_REST_API_URL;
-  const token = process.env.KV_REST_API_TOKEN;
+  // Try both old Vercel KV and new Upstash Redis env var names
+  const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+
+  // Log which env vars exist (presence only, never values)
+  console.log('[Storage] Env var check:', JSON.stringify({
+    KV_REST_API_URL: !!process.env.KV_REST_API_URL,
+    KV_REST_API_TOKEN: !!process.env.KV_REST_API_TOKEN,
+    UPSTASH_REDIS_REST_URL: !!process.env.UPSTASH_REDIS_REST_URL,
+    UPSTASH_REDIS_REST_TOKEN: !!process.env.UPSTASH_REDIS_REST_TOKEN,
+  }));
 
   if (!url || !token) {
-    console.warn('KV credentials missing (need KV_REST_API_URL + KV_REST_API_TOKEN) — using in-memory storage');
+    console.error('[Storage] FATAL: No KV/Redis credentials found. Dashboard will show 0. Set KV_REST_API_URL+KV_REST_API_TOKEN or UPSTASH_REDIS_REST_URL+UPSTASH_REDIS_REST_TOKEN in Vercel env vars.');
+    storageBackend = 'memory';
     return null;
   }
 
   try {
-    const vercelKv = require('@vercel/kv');
-    if (typeof vercelKv.createClient === 'function') {
-      kvClient = vercelKv.createClient({ url, token });
-    } else {
-      kvClient = vercelKv.kv || (vercelKv.default && vercelKv.default.kv) || null;
-    }
-
-    if (!kvClient) {
-      console.error('Could not initialize @vercel/kv client — using in-memory storage');
-      return null;
-    }
-
-    console.log('Vercel KV storage initialized successfully');
+    const { createClient } = require('@vercel/kv');
+    kvClient = createClient({ url, token });
+    storageBackend = 'kv';
+    console.log('[Storage] KV client created successfully via createClient()');
     return kvClient;
   } catch (err) {
-    console.error('Failed to load @vercel/kv:', err.message, '— using in-memory storage');
+    console.error('[Storage] Failed to create KV client:', err.message);
+    storageBackend = 'memory';
     return null;
   }
+}
+
+function getStorageStatus() {
+  getKV(); // ensure initialized
+  return {
+    backend: storageBackend,
+    kvConnected: kvClient !== null,
+    envVars: {
+      KV_REST_API_URL: !!process.env.KV_REST_API_URL,
+      KV_REST_API_TOKEN: !!process.env.KV_REST_API_TOKEN,
+      UPSTASH_REDIS_REST_URL: !!process.env.UPSTASH_REDIS_REST_URL,
+      UPSTASH_REDIS_REST_TOKEN: !!process.env.UPSTASH_REDIS_REST_TOKEN,
+    },
+  };
 }
 
 // Generic get/set wrappers
 async function kvGet(key) {
   const store = getKV();
   if (store) {
-    return await store.get(key);
+    try {
+      return await store.get(key);
+    } catch (err) {
+      console.error('[Storage] KV GET failed for key:', key, '— error:', err.message);
+      return null;
+    }
   }
   return memoryStore.get(key) || null;
 }
@@ -50,7 +72,12 @@ async function kvGet(key) {
 async function kvSet(key, value) {
   const store = getKV();
   if (store) {
-    await store.set(key, value);
+    try {
+      await store.set(key, value);
+    } catch (err) {
+      console.error('[Storage] KV SET failed for key:', key, '— error:', err.message);
+      throw err; // re-throw so callers know storage failed
+    }
   } else {
     memoryStore.set(key, value);
   }
@@ -159,4 +186,4 @@ async function getStats() {
   };
 }
 
-module.exports = { storeConversation, getContacts, getMessages, getAllConversations, getStats };
+module.exports = { storeConversation, getContacts, getMessages, getAllConversations, getStats, getStorageStatus };

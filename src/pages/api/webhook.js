@@ -28,10 +28,12 @@ module.exports = async function handler(req, res) {
 
   // POST: Incoming WhatsApp messages
   if (req.method === 'POST') {
+    console.log('[Webhook] POST received');
     try {
       const body = req.body;
 
       if (body?.object !== 'whatsapp_business_account') {
+        console.log('[Webhook] Ignoring non-whatsapp object:', body?.object);
         return res.status(200).send('OK');
       }
 
@@ -109,17 +111,18 @@ module.exports = async function handler(req, res) {
             }
 
             // Store conversation in KV (dashboard storage)
+            console.log('[Webhook] Storing conversation for:', from);
             try {
-              await storeConversation({
+              const stored = await storeConversation({
                 phone: from,
                 customerName,
                 customerMessage,
                 botReply,
                 messageType,
               });
-              console.log('Conversation stored for', from, customerName ? `(${customerName})` : '');
+              console.log('[Webhook] Stored successfully:', JSON.stringify({ phone: from, timestamp: stored.timestamp }));
             } catch (err) {
-              console.error('Storage error:', err.message);
+              console.error('[Webhook] STORAGE FAILED:', err.message, err.stack);
               // Don't fail the webhook if storage fails
             }
           }
