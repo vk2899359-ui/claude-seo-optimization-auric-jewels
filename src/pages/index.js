@@ -1,24 +1,173 @@
 import SEOHead from '../components/SEOHead';
 import { homepageSEO, SITE_URL } from '../lib/seo-config';
 
-const structuredData = {
+// ─── STRUCTURED DATA: JewelryStore + LocalBusiness ───────────
+const jewelryStoreSchema = {
   '@context': 'https://schema.org',
   '@type': 'JewelryStore',
+  '@id': `${SITE_URL}/#jewelry-store`,
   name: 'Auric Jewels',
+  alternateName: 'Auric Jewels Gurgaon',
   url: SITE_URL,
-  image: `${SITE_URL}/logo.png`,
+  logo: `${SITE_URL}/logo.png`,
+  image: [
+    `${SITE_URL}/images/auric-jewels-og.jpg`,
+    `${SITE_URL}/images/auric-jewels-showroom.jpg`,
+  ],
   description:
-    'Premium gold & diamond jewellery store in Gurgaon. BIS hallmarked jewellery, certified diamonds, solitaire collection.',
+    'Premium gold & diamond jewellery store in Gurgaon, Haryana. BIS hallmarked gold jewellery, IGI/GIA certified diamonds, solitaire collection, bridal sets, and custom designs. Visit our showroom in Gurgaon.',
   address: {
     '@type': 'PostalAddress',
+    streetAddress: 'Gurgaon',
     addressLocality: 'Gurgaon',
     addressRegion: 'Haryana',
+    postalCode: '122001',
     addressCountry: 'IN',
   },
-  priceRange: '\u20B9\u20B9\u20B9',
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 28.4595,
+    longitude: 77.0266,
+  },
+  areaServed: [
+    { '@type': 'City', name: 'Gurgaon' },
+    { '@type': 'City', name: 'Delhi' },
+    { '@type': 'City', name: 'Noida' },
+    { '@type': 'City', name: 'Faridabad' },
+    { '@type': 'State', name: 'Haryana' },
+    { '@type': 'Country', name: 'India' },
+  ],
+  priceRange: '₹₹₹',
   telephone: '+91-9012495941',
-  openingHours: 'Mo-Su 10:00-20:00',
+  email: 'info@auricjewels.com',
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      opens: '10:00',
+      closes: '20:00',
+    },
+  ],
+  sameAs: [
+    'https://www.instagram.com/auricjewels/',
+    'https://www.facebook.com/auricjewels/',
+    'https://www.youtube.com/@auricjewels',
+    'https://www.pinterest.com/auricjewels/',
+  ],
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Gold & Diamond Jewellery',
+    itemListElement: [
+      { '@type': 'OfferCatalog', name: 'Diamond Rings', url: `${SITE_URL}/categories/rings` },
+      { '@type': 'OfferCatalog', name: 'Diamond Earrings', url: `${SITE_URL}/categories/earrings` },
+      { '@type': 'OfferCatalog', name: 'Gold Necklaces', url: `${SITE_URL}/categories/necklaces` },
+      { '@type': 'OfferCatalog', name: 'Diamond Bracelets', url: `${SITE_URL}/categories/bracelets` },
+      { '@type': 'OfferCatalog', name: 'Gold Bangles', url: `${SITE_URL}/categories/bangles` },
+      { '@type': 'OfferCatalog', name: 'Solitaire Collection', url: `${SITE_URL}/collections/solitaire-collection` },
+    ],
+  },
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: '4.9',
+    bestRating: '5',
+    worstRating: '1',
+    ratingCount: '187',
+    reviewCount: '142',
+  },
+  review: [
+    {
+      '@type': 'Review',
+      reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5' },
+      author: { '@type': 'Person', name: 'Priya M.' },
+      reviewBody: 'Auric Jewels made my engagement ring shopping experience unforgettable. The team helped us choose the perfect solitaire with complete transparency on certification and pricing.',
+    },
+    {
+      '@type': 'Review',
+      reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5' },
+      author: { '@type': 'Person', name: 'Rahul & Sneha K.' },
+      reviewBody: 'We bought our complete bridal set from Auric Jewels. The quality of craftsmanship, the BIS hallmarking on every piece, and the personalised service made all the difference.',
+    },
+    {
+      '@type': 'Review',
+      reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5' },
+      author: { '@type': 'Person', name: 'Anita S.' },
+      reviewBody: 'I have been buying daily wear diamond jewellery from Auric Jewels for two years now. Every piece comes with proper certification and the lifetime exchange policy gives me complete peace of mind.',
+    },
+  ],
 };
+
+// ─── STRUCTURED DATA: FAQPage (for rich snippets in Google) ──
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Where is the best jewellery showroom in Gurgaon?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Auric Jewels is a premium jewellery showroom in Gurgaon offering BIS hallmarked gold and IGI/GIA certified diamond jewellery. Visit our showroom for a personalised experience with expert consultations, transparent pricing, and lifetime exchange policy.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Does Auric Jewels sell BIS hallmarked gold jewellery?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes, every piece of gold jewellery at Auric Jewels carries a BIS hallmark with a verifiable HUID number, guaranteeing the exact purity of 18K or 22K gold. We are committed to 100% transparency in gold purity.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Are the diamonds at Auric Jewels certified?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes, every diamond used in our jewellery is IGI or GIA certified, ensuring exceptional cut, clarity, colour, and carat weight. Certification documents are provided with every diamond purchase.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Does Auric Jewels offer free shipping in India?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes, Auric Jewels offers free insured shipping across India on all orders. Every shipment is fully insured and tracked for your peace of mind. We also offer a 15-day easy return policy and lifetime exchange at full gold value.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I buy diamond engagement rings in Gurgaon from Auric Jewels?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Absolutely! Auric Jewels offers a stunning collection of diamond engagement rings in Gurgaon, including solitaire rings, halo rings, and custom designs. All diamonds are IGI/GIA certified. Visit our Gurgaon showroom or shop online with free shipping.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the return policy at Auric Jewels?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Auric Jewels offers a 15-day easy return policy on all purchases. We also offer lifetime exchange at full gold value, giving you complete peace of mind with every purchase.',
+      },
+    },
+  ],
+};
+
+// ─── STRUCTURED DATA: WebSite (for sitelinks search box) ─────
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${SITE_URL}/#website`,
+  name: 'Auric Jewels',
+  url: SITE_URL,
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: `${SITE_URL}/search?q={search_term_string}`,
+    'query-input': 'required name=search_term_string',
+  },
+};
+
+// Combine all structured data
+const structuredData = [jewelryStoreSchema, faqSchema, websiteSchema];
 
 const categories = [
   { name: 'Rings', slug: 'rings', icon: '💍' },
@@ -257,7 +406,40 @@ export default function HomePage() {
         </section>
 
         {/* ═══════════════════════════════════════════════════
-            7. BLOG PREVIEW
+            7. FAQ SECTION — matches FAQPage schema for rich snippets
+            ═══════════════════════════════════════════════════ */}
+        <section className="section faq-section">
+          <h2 className="section-title">Frequently Asked Questions</h2>
+          <div className="faq-grid">
+            <div className="faq-item">
+              <h3>Where is the best jewellery showroom in Gurgaon?</h3>
+              <p>Auric Jewels is a premium jewellery showroom in Gurgaon offering BIS hallmarked gold and IGI/GIA certified diamond jewellery. Visit our showroom for a personalised experience with expert consultations, transparent pricing, and lifetime exchange policy.</p>
+            </div>
+            <div className="faq-item">
+              <h3>Does Auric Jewels sell BIS hallmarked gold jewellery?</h3>
+              <p>Yes, every piece of gold jewellery at Auric Jewels carries a BIS hallmark with a verifiable HUID number, guaranteeing the exact purity of 18K or 22K gold. We are committed to 100% transparency in gold purity.</p>
+            </div>
+            <div className="faq-item">
+              <h3>Are the diamonds at Auric Jewels certified?</h3>
+              <p>Yes, every diamond used in our jewellery is IGI or GIA certified, ensuring exceptional cut, clarity, colour, and carat weight. Certification documents are provided with every diamond purchase.</p>
+            </div>
+            <div className="faq-item">
+              <h3>Does Auric Jewels offer free shipping in India?</h3>
+              <p>Yes, Auric Jewels offers free insured shipping across India on all orders. Every shipment is fully insured and tracked for your peace of mind. We also offer a 15-day easy return policy and lifetime exchange at full gold value.</p>
+            </div>
+            <div className="faq-item">
+              <h3>Can I buy diamond engagement rings in Gurgaon from Auric Jewels?</h3>
+              <p>Absolutely! Auric Jewels offers a stunning collection of diamond engagement rings in Gurgaon, including solitaire rings, halo rings, and custom designs. All diamonds are IGI/GIA certified. Visit our Gurgaon showroom or shop online with free shipping.</p>
+            </div>
+            <div className="faq-item">
+              <h3>What is the return policy at Auric Jewels?</h3>
+              <p>Auric Jewels offers a 15-day easy return policy on all purchases. We also offer lifetime exchange at full gold value, giving you complete peace of mind with every purchase.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* ═══════════════════════════════════════════════════
+            8. BLOG PREVIEW
             ═══════════════════════════════════════════════════ */}
         <section className="section blog-section">
           <h2 className="section-title">From Our Journal</h2>
@@ -325,8 +507,18 @@ export default function HomePage() {
               </div>
             </div>
           </div>
+          {/* Areas We Serve — Local SEO for Gurgaon & Delhi NCR */}
+          <div className="footer-col footer-areas">
+            <h3 className="footer-heading">Areas We Serve</h3>
+            <p className="footer-text">
+              Gurgaon (Gurugram) | DLF Phase 1-5 | Golf Course Road | MG Road | Sohna Road |
+              Cyber City | Sector 29 | Sector 14 | South City | Manesar |
+              Delhi | Noida | Faridabad | Greater Noida | Ghaziabad | Delhi NCR
+            </p>
+          </div>
+
           <div className="footer-bottom">
-            <p>&copy; 2026 Auric Jewels. All rights reserved. | BIS Hallmarked Gold | IGI/GIA Certified Diamonds</p>
+            <p>&copy; 2026 Auric Jewels. All rights reserved. | BIS Hallmarked Gold | IGI/GIA Certified Diamonds | Jewellery Shop in Gurgaon</p>
           </div>
         </div>
       </footer>

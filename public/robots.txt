@@ -1,5 +1,25 @@
+# Auric Jewels — www.auricjewels.com
+# Premium Gold & Diamond Jewellery in Gurgaon
+
 User-agent: *
 Allow: /
+Allow: /categories/
+Allow: /collections/
+Allow: /products/
+Allow: /blog/
 Disallow: /admin
 Disallow: /checkout
+Disallow: /api/
+Disallow: /_next/
+Disallow: /search?*
+
+# Sitemaps
 Sitemap: https://www.auricjewels.com/sitemap.xml
+Sitemap: https://www.auricjewels.com/sitemap-0.xml
+
+# Crawl-delay for polite crawling
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10

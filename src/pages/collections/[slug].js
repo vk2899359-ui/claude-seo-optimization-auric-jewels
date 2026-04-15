@@ -28,6 +28,39 @@ const collectionDescriptions = {
   'valentine-collection': `Find the perfect Valentine's Day jewellery gift at Auric Jewels Gurgaon. Our Valentine's collection features heart-shaped pendants, love knot rings, infinity bracelets, and romantic diamond earrings — all designed to express your deepest feelings. Every piece is crafted in 18K and 22K BIS hallmarked gold with IGI/GIA certified diamonds. Whether you're surprising your partner, celebrating a new romance, or treating yourself, our Valentine's Day designs combine love and luxury beautifully. Complimentary gift wrapping with every order. Free shipping across India and 15-day easy returns.`,
 };
 
+// ─── Collection-specific FAQs for rich snippets ─────────────
+const collectionFAQs = {
+  'solitaire-collection': [
+    { q: 'What is a solitaire diamond ring?', a: 'A solitaire diamond ring features a single diamond as the centrepiece, set in a simple band. It is the most classic and timeless engagement ring style. At Auric Jewels Gurgaon, our solitaire rings feature IGI/GIA certified diamonds in 18K and 22K hallmarked gold.' },
+    { q: 'How do I choose the right solitaire diamond?', a: 'Focus on the 4Cs — Cut, Clarity, Colour, and Carat. Cut is the most important factor for brilliance. Visit Auric Jewels Gurgaon for an expert consultation where our diamond specialists will help you choose the perfect solitaire within your budget.' },
+    { q: 'What is the starting price of a solitaire ring in Gurgaon?', a: 'Solitaire diamond rings at Auric Jewels Gurgaon start from ₹35,000 for 0.15 carat stones and go up based on the diamond size, quality, and metal choice. All stones are IGI/GIA certified.' },
+  ],
+  'best-sellers': [
+    { q: 'What are the best selling jewellery items at Auric Jewels?', a: 'Our best sellers include diamond studs, solitaire engagement rings, gold chain necklaces, tennis bracelets, and lightweight daily-wear bangles. These are the most loved pieces by our customers across Gurgaon and Delhi NCR.' },
+    { q: 'Why should I buy from Auric Jewels\' best sellers collection?', a: 'Our best sellers are customer-tested and loved. They represent the finest craftsmanship, design, and value. Every piece is in BIS hallmarked gold with certified diamonds, backed by our lifetime exchange guarantee.' },
+  ],
+  'new-arrivals': [
+    { q: 'How often does Auric Jewels add new designs?', a: 'We update our New Arrivals collection weekly with fresh designs in gold and diamond jewellery. Follow us on Instagram or visit our Gurgaon showroom to see the latest additions first.' },
+    { q: 'Can I pre-order upcoming designs?', a: 'Yes, you can pre-order upcoming designs or request custom modifications. Contact our team at +91-9012495941 or visit our Gurgaon showroom for personalised assistance.' },
+  ],
+  'for-her': [
+    { q: 'What jewellery gifts are best for women?', a: 'Diamond studs, pendant necklaces, charm bracelets, and stackable rings are universally loved gifts. Auric Jewels offers complimentary gift wrapping and personalised engraving on select pieces.' },
+    { q: 'Do you have jewellery for everyday wear?', a: 'Yes, our "For Her" collection features a dedicated everyday wear range — lightweight, durable, and elegant. Designed for working women who want to look stylish without the heaviness of traditional jewellery.' },
+  ],
+  'for-him': [
+    { q: 'Does Auric Jewels sell men\'s jewellery?', a: 'Yes! Our men\'s collection features gold chains, bracelets, rings, diamond studs, and cufflinks. Crafted in 18K and 22K BIS hallmarked gold with masculine, contemporary designs.' },
+    { q: 'What is the most popular men\'s jewellery?', a: 'Gold chains and diamond studs are our most popular men\'s pieces. We also see growing demand for men\'s bracelets and platinum rings. Visit our Gurgaon showroom for the full men\'s collection.' },
+  ],
+  'anniversary-collection': [
+    { q: 'What is the best anniversary gift in jewellery?', a: 'Diamond eternity bands, heart pendants, and matching couple rings are the most popular anniversary gifts. Auric Jewels offers beautiful gift packaging with personalised engraving options.' },
+    { q: 'Do you have jewellery for milestone anniversaries?', a: 'Yes, we have curated collections for every milestone — from your first anniversary to silver (25th) and golden (50th) jubilee. Each piece comes with complimentary gift wrapping.' },
+  ],
+  'valentine-collection': [
+    { q: 'What jewellery should I gift on Valentine\'s Day?', a: 'Heart-shaped pendants, love knot rings, infinity bracelets, and diamond studs are perfect Valentine\'s Day gifts. Auric Jewels offers complimentary gift wrapping and express delivery for Valentine\'s week.' },
+    { q: 'When should I order Valentine\'s Day jewellery?', a: 'We recommend ordering at least 5-7 days before Valentine\'s Day for standard delivery, or 3 days before with express shipping. Visit our Gurgaon showroom for same-day purchases.' },
+  ],
+};
+
 export default function CollectionPage({ slug, seo }) {
   const breadcrumbData = {
     '@context': 'https://schema.org',
@@ -43,13 +76,27 @@ export default function CollectionPage({ slug, seo }) {
     ],
   };
 
+  // FAQPage schema for rich snippets
+  const faqs = collectionFAQs[slug] || [];
+  const faqSchema = faqs.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: { '@type': 'Answer', text: faq.a },
+    })),
+  } : null;
+
+  const structuredData = faqSchema ? [breadcrumbData, faqSchema] : breadcrumbData;
+
   return (
     <>
       <SEOHead
         title={seo.title}
         description={seo.description}
         canonical={`/collections/${slug}`}
-        structuredData={breadcrumbData}
+        structuredData={structuredData}
       />
 
       <main className="container">
@@ -72,6 +119,19 @@ export default function CollectionPage({ slug, seo }) {
             </p>
           </div>
         </section>
+
+        {/* FAQ section — matches FAQPage schema for rich snippets */}
+        {faqs.length > 0 && (
+          <section className="faq-section">
+            <h2>Frequently Asked Questions</h2>
+            {faqs.map((faq, i) => (
+              <div key={i} className="faq-item">
+                <h3>{faq.q}</h3>
+                <p>{faq.a}</p>
+              </div>
+            ))}
+          </section>
+        )}
       </main>
     </>
   );

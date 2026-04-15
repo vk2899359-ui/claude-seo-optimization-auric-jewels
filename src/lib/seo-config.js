@@ -155,4 +155,52 @@ This ${name} is perfect for ${category === 'rings' ? 'engagements, anniversaries
 Shop with confidence at Auric Jewels Gurgaon — enjoy free shipping across India, easy 15-day returns, and lifetime exchange. Visit our Gurgaon showroom for an in-person experience.`;
 }
 
+// ─── BLOG PAGE SEO ─────────────────────────────────────────
+export const blogSEO = {
+  title: 'Jewellery Buying Guides & Tips | Auric Jewels Blog | Gurgaon',
+  h1: 'Auric Jewels Journal — Expert Guides on Gold & Diamond Jewellery',
+  description:
+    'Expert guides on buying gold & diamond jewellery in Gurgaon. Learn about diamond certification, gold purity, jewellery trends 2026, styling tips & investment advice from Auric Jewels.',
+  canonical: `${SITE_URL}/blog`,
+};
+
+// ─── LOCAL SEO: Gurgaon & Delhi NCR targeting ──────────────
+export const localSEO = {
+  businessName: 'Auric Jewels',
+  city: 'Gurgaon',
+  state: 'Haryana',
+  country: 'India',
+  postalCode: '122001',
+  phone: '+91-9012495941',
+  email: 'info@auricjewels.com',
+  latitude: 28.4595,
+  longitude: 77.0266,
+  openingHours: 'Mo-Su 10:00-20:00',
+  serviceAreas: [
+    'Gurgaon', 'Gurugram', 'Delhi', 'Noida', 'Faridabad',
+    'Greater Noida', 'Ghaziabad', 'Delhi NCR', 'Manesar',
+    'Sohna Road', 'Golf Course Road', 'MG Road Gurgaon',
+    'DLF Phase', 'Sector 29 Gurgaon', 'Cyber City',
+  ],
+  // Target keywords for Gurgaon local search
+  localKeywords: [
+    'jewellery shop in Gurgaon',
+    'gold jewellery Gurgaon',
+    'diamond jewellery Gurgaon',
+    'best jeweller in Gurgaon',
+    'jewellery showroom Gurgaon',
+    'diamond ring Gurgaon',
+    'gold necklace Gurgaon',
+    'bridal jewellery Gurgaon',
+    'solitaire ring Gurgaon',
+    'engagement ring Gurgaon',
+    'BIS hallmarked gold Gurgaon',
+    'certified diamond jewellery Delhi NCR',
+    'premium jewellery store Gurgaon',
+    'gold bangles Gurgaon',
+    'diamond earrings Gurgaon',
+    'mangalsutra designs Gurgaon',
+  ],
+};
+
 export { SITE_NAME, SITE_URL, DEFAULT_OG_IMAGE };

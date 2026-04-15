@@ -1,0 +1,27 @@
+{
+  "name": "Auric Jewels - Luxury Gold & Diamond Jewellery in Gurgaon",
+  "short_name": "Auric Jewels",
+  "description": "Premium gold & diamond jewellery store in Gurgaon. BIS hallmarked gold, IGI/GIA certified diamonds. Shop online or visit our showroom.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFDF5",
+  "theme_color": "#8B6914",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-IN",
+  "categories": ["shopping", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

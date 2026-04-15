@@ -33,6 +33,49 @@ const categoryDescriptions = {
   'nose-pins': `Shop delicate gold and diamond nose pins at Auric Jewels Gurgaon. Our collection features classic studs, elegant hoops, and trendy screw-back designs crafted in 18K and 22K BIS hallmarked gold. Adorned with IGI/GIA certified diamonds, each nose pin is designed for comfort and sparkle. Whether you prefer a subtle diamond stud for everyday wear or a statement piece for special occasions, our range has something for everyone. All nose pins come with secure fittings for worry-free wear. Free shipping across India and 15-day easy returns.`,
 };
 
+// ─── Category-specific FAQs for rich snippets ──────────────
+const categoryFAQs = {
+  rings: [
+    { q: 'What is the price range of diamond rings at Auric Jewels Gurgaon?', a: 'Diamond rings at Auric Jewels Gurgaon start from ₹15,000 for daily wear designs and go up to ₹5,00,000+ for premium solitaire engagement rings. All rings are crafted in 18K or 22K BIS hallmarked gold with IGI/GIA certified diamonds.' },
+    { q: 'Can I customise an engagement ring at Auric Jewels?', a: 'Yes, Auric Jewels offers bespoke ring customisation. Choose your diamond, metal, and design. Our master craftsmen will create your dream engagement ring. Visit our Gurgaon showroom for a personalised consultation.' },
+    { q: 'Do you offer solitaire rings in Gurgaon?', a: 'Yes, we have an extensive solitaire ring collection featuring IGI/GIA certified diamonds in various cuts — round brilliant, princess, cushion, oval, and emerald cut. All set in 18K or 22K hallmarked gold or platinum.' },
+  ],
+  earrings: [
+    { q: 'What types of diamond earrings are available at Auric Jewels?', a: 'We offer diamond studs, hoops, drops, jhumkas, chandbalis, and ear cuffs. All crafted in BIS hallmarked gold with IGI/GIA certified diamonds. Perfect for everyday wear and special occasions.' },
+    { q: 'Are diamond studs a good investment?', a: 'Diamond studs are one of the most versatile jewellery investments. They can be worn daily, for work, and for special occasions. At Auric Jewels, all diamond studs come with certification, ensuring value retention.' },
+    { q: 'Can I buy lightweight gold earrings for daily wear?', a: 'Yes, Auric Jewels has a dedicated lightweight collection starting from 2 grams. Designed for working women who want elegance without heaviness. Available in 18K and 22K hallmarked gold.' },
+  ],
+  necklaces: [
+    { q: 'What gold necklace designs are trending in 2026?', a: 'Layered necklaces, minimalist chain pendants, choker sets, and statement pieces are trending in 2026. Auric Jewels Gurgaon has the latest designs in 18K and 22K BIS hallmarked gold with certified diamonds.' },
+    { q: 'Do you have bridal necklace sets in Gurgaon?', a: 'Yes, we have an exclusive bridal collection featuring complete necklace sets with matching earrings, maang tikka, and bangles. All in BIS hallmarked gold with IGI/GIA certified diamonds.' },
+    { q: 'What is the starting price for gold necklaces?', a: 'Gold necklaces at Auric Jewels start from ₹25,000 for delicate chain designs. Bridal and statement necklaces range from ₹1,00,000 to ₹10,00,000+. All prices are transparent with no hidden charges.' },
+  ],
+  bracelets: [
+    { q: 'What is a tennis bracelet and is it available at Auric Jewels?', a: 'A tennis bracelet is a thin, elegant bracelet featuring a continuous line of individually set diamonds. Auric Jewels offers stunning diamond tennis bracelets in 18K gold, starting from ₹50,000. All diamonds are IGI/GIA certified.' },
+    { q: 'Are gold bracelets a good gift option?', a: 'Gold bracelets are one of the most appreciated gifts for women. They are versatile, timeless, and hold their value. Auric Jewels offers complimentary gift wrapping on all bracelet purchases.' },
+  ],
+  bangles: [
+    { q: 'What is the gold purity of bangles at Auric Jewels?', a: 'Our gold bangles are available in both 18K (75% purity) and 22K (91.6% purity), all BIS hallmarked with HUID numbers for guaranteed authenticity.' },
+    { q: 'Do you have diamond bangles for daily wear?', a: 'Yes, we have a lightweight diamond bangle collection designed for daily wear. These feature subtle diamond accents in 18K gold, combining elegance with comfort for everyday use.' },
+  ],
+  pendants: [
+    { q: 'Can I buy a diamond pendant with chain at Auric Jewels?', a: 'Yes, all our diamond pendants can be purchased with a matching gold chain. We offer various chain lengths and styles to complement each pendant design. BIS hallmarked gold with certified diamonds.' },
+    { q: 'What are popular pendant designs in 2026?', a: 'Initial pendants, evil eye designs, solitaire drops, heart-shaped pendants, and geometric patterns are popular in 2026. Explore our latest collection at the Gurgaon showroom or online.' },
+  ],
+  chains: [
+    { q: 'What types of gold chains do you offer?', a: 'We offer rope chains, box chains, cable chains, curb chains, figaro chains, and designer link chains in 18K and 22K BIS hallmarked gold. Available for both women and men in multiple lengths.' },
+    { q: 'Are gold chains available for men at Auric Jewels?', a: 'Yes, we have an extensive men\'s gold chain collection featuring bold, masculine designs in 22K hallmarked gold. Styles include rope, curb, and box chains in various weights and lengths.' },
+  ],
+  mangalsutra: [
+    { q: 'What are the latest mangalsutra designs at Auric Jewels?', a: 'Our latest mangalsutra collection includes single-line diamond pendants, sleek modern chain designs, and contemporary dual-chain styles. All in 18K/22K BIS hallmarked gold with IGI certified diamonds.' },
+    { q: 'Can I get a modern mangalsutra that looks like a regular necklace?', a: 'Yes, Auric Jewels specialises in modern mangalsutra designs that double as stylish necklaces. Sleek diamond pendants on delicate gold chains that blend tradition with contemporary fashion.' },
+  ],
+  'nose-pins': [
+    { q: 'What nose pin designs are available at Auric Jewels?', a: 'We offer diamond studs, gold hoops, screw-back designs, and L-shaped nose pins in 18K and 22K BIS hallmarked gold. Diamond nose pins feature IGI/GIA certified stones.' },
+    { q: 'Are diamond nose pins comfortable for daily wear?', a: 'Yes, our nose pins are designed for maximum comfort. We offer lightweight designs with secure screw-back and push-back fittings. The diamond studs start from just 0.5 grams for worry-free daily wear.' },
+  ],
+};
+
 export default function CategoryPage({ slug, seo }) {
   const breadcrumbData = {
     '@context': 'https://schema.org',
@@ -48,13 +91,27 @@ export default function CategoryPage({ slug, seo }) {
     ],
   };
 
+  // FAQPage schema for rich snippets
+  const faqs = categoryFAQs[slug] || [];
+  const faqSchema = faqs.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: { '@type': 'Answer', text: faq.a },
+    })),
+  } : null;
+
+  const structuredData = faqSchema ? [breadcrumbData, faqSchema] : breadcrumbData;
+
   return (
     <>
       <SEOHead
         title={seo.title}
         description={seo.description}
         canonical={`/categories/${slug}`}
-        structuredData={breadcrumbData}
+        structuredData={structuredData}
       />
 
       <main className="container">
@@ -83,24 +140,36 @@ export default function CategoryPage({ slug, seo }) {
           </div>
         </section>
 
-        {/* FAQ section for additional crawlable content */}
-        <section>
-          <h2>Frequently Asked Questions</h2>
-          <h3>What is the purity of gold used at Auric Jewels?</h3>
-          <p>
-            All our gold jewellery is available in 18K and 22K purity, BIS hallmarked
-            for guaranteed quality and authenticity.
-          </p>
-          <h3>Are the diamonds certified?</h3>
-          <p>
-            Yes, every diamond used in our jewellery is IGI or GIA certified, ensuring
-            exceptional cut, clarity, colour, and carat weight.
-          </p>
-          <h3>Do you offer free shipping?</h3>
-          <p>
-            Yes, we offer free insured shipping across India on all orders. International
-            shipping is available at additional cost.
-          </p>
+        {/* FAQ section — matches FAQPage schema for rich snippets */}
+        <section className="faq-section">
+          <h2>Frequently Asked Questions about {seo.h1.split('|')[0].trim()}</h2>
+          {faqs.length > 0 && faqs.map((faq, i) => (
+            <div key={i} className="faq-item">
+              <h3>{faq.q}</h3>
+              <p>{faq.a}</p>
+            </div>
+          ))}
+          <div className="faq-item">
+            <h3>What is the purity of gold used at Auric Jewels?</h3>
+            <p>
+              All our gold jewellery is available in 18K and 22K purity, BIS hallmarked
+              for guaranteed quality and authenticity with verifiable HUID numbers.
+            </p>
+          </div>
+          <div className="faq-item">
+            <h3>Are the diamonds certified?</h3>
+            <p>
+              Yes, every diamond used in our jewellery is IGI or GIA certified, ensuring
+              exceptional cut, clarity, colour, and carat weight. Certificates are provided with every purchase.
+            </p>
+          </div>
+          <div className="faq-item">
+            <h3>Do you offer free shipping?</h3>
+            <p>
+              Yes, we offer free insured shipping across India on all orders. We also offer
+              a 15-day easy return policy and lifetime exchange at full gold value.
+            </p>
+          </div>
         </section>
       </main>
     </>
