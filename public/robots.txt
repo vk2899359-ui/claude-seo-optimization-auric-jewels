@@ -1,5 +1,9 @@
 User-agent: *
 Allow: /
-Disallow: /admin
-Disallow: /checkout
+Disallow: /admin/
+Disallow: /checkout/
+Disallow: /cart/
+Disallow: /account/
+Disallow: /api/
+
 Sitemap: https://www.auricjewels.com/sitemap.xml

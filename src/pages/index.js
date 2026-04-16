@@ -1,7 +1,40 @@
 import SEOHead from '../components/SEOHead';
 import { homepageSEO, SITE_URL } from '../lib/seo-config';
 
-const structuredData = {
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Auric Jewels',
+  url: SITE_URL,
+  logo: `${SITE_URL}/logo.png`,
+  description:
+    'Premium gold & diamond jewellery store in Gurgaon. BIS hallmarked jewellery, certified diamonds, solitaire collection.',
+  telephone: '+919012495941',
+  email: 'info@auricjewels.com',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Sector 45',
+    addressLocality: 'Gurgaon',
+    addressRegion: 'Haryana',
+    postalCode: '122003',
+    addressCountry: 'IN',
+  },
+  sameAs: [],
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Auric Jewels',
+  url: SITE_URL,
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: `${SITE_URL}/search?q={search_term_string}`,
+    'query-input': 'required name=search_term_string',
+  },
+};
+
+const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'JewelryStore',
   name: 'Auric Jewels',
@@ -11,14 +44,36 @@ const structuredData = {
     'Premium gold & diamond jewellery store in Gurgaon. BIS hallmarked jewellery, certified diamonds, solitaire collection.',
   address: {
     '@type': 'PostalAddress',
+    streetAddress: 'Sector 45',
     addressLocality: 'Gurgaon',
     addressRegion: 'Haryana',
+    postalCode: '122003',
     addressCountry: 'IN',
   },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 28.4485,
+    longitude: 77.0755,
+  },
   priceRange: '\u20B9\u20B9\u20B9',
-  telephone: '+91-9012495941',
-  openingHours: 'Mo-Su 10:00-20:00',
+  telephone: '+919012495941',
+  openingHoursSpecification: [{
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    opens: '11:00',
+    closes: '20:30',
+  }],
 };
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+  ],
+};
+
+const structuredData = [organizationSchema, websiteSchema, localBusinessSchema, breadcrumbSchema];
 
 const categories = [
   { name: 'Rings', slug: 'rings', icon: '💍' },
