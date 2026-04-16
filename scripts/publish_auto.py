@@ -17,7 +17,13 @@ EXCLUDE = ["blog-01-","blog-gold-jewellery-investment-2026","blog-lab-grown-vs-n
 
 def gql(query, variables=None, token=None):
     payload = json.dumps({"query": query, **({"variables": variables} if variables else {})}).encode()
-    headers = {"Content-Type": "application/json"}
+    headers = {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "Accept": "application/json",
+        "Origin": "https://auric.thecodemesh.online",
+        "Referer": "https://auric.thecodemesh.online/dashboard/",
+    }
     if token:
         headers["Authorization"] = f"Bearer {token}"
     req = urllib.request.Request(API, data=payload, headers=headers, method="POST")
