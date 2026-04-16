@@ -1,0 +1,75 @@
+name: Publish 30 Blogs to Saleor CMS
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (log only, don't push to Saleor)"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verify blog files exist
+        run: |
+          echo "=== Blog files to publish ==="
+          count=$(ls -1 content/blog-*.html 2>/dev/null | grep -cv 'blog-01-\|blog-gold-jewellery-investment-2026\|blog-lab-grown-vs-natural\|blog-jewellery-trends-india-2026\|blog-layered-necklace\|blog-lightweight-gold\|blog-platinum-jewellery')
+          echo "Found $count new blog files"
+          if [ "$count" -eq 0 ]; then
+            echo "ERROR: No new blog files found!"
+            exit 1
+          fi
+          ls -1 content/blog-*.html | grep -v 'blog-01-\|blog-gold-jewellery-investment-2026\|blog-lab-grown-vs-natural\|blog-jewellery-trends-india-2026\|blog-layered-necklace\|blog-lightweight-gold\|blog-platinum-jewellery'
+
+      - name: Publish to Saleor (DRAFT mode)
+        if: inputs.dry_run == 'false'
+        env:
+          SALEOR_TOKEN: ${{ secrets.SALEOR_TOKEN }}
+        run: |
+          if [ -z "$SALEOR_TOKEN" ]; then
+            echo "ERROR: SALEOR_TOKEN secret is not set!"
+            echo "Go to Settings > Secrets and variables > Actions > New repository secret"
+            exit 1
+          fi
+          python3 scripts/publish_all.py
+
+      - name: Dry run — list what would be published
+        if: inputs.dry_run == 'true'
+        run: |
+          echo "=== DRY RUN — These blogs would be pushed ==="
+          for f in content/blog-*.html; do
+            base=$(basename "$f" .html)
+            # Skip pre-existing
+            case "$base" in
+              blog-01-*|blog-gold-jewellery-investment-2026*|blog-lab-grown-vs-natural*|blog-jewellery-trends-india-2026*|blog-layered-necklace*|blog-lightweight-gold*|blog-platinum-jewellery*) continue;;
+            esac
+            title=$(grep -oP '(?<=<h1>).*?(?=</h1>)' "$f" | head -1 | sed 's/<[^>]*>//g')
+            slug=$(echo "$base" | sed 's/^blog-//')
+            echo "  [$slug] $title"
+          done
+          echo ""
+          echo "=== To publish for real, re-run with dry_run=false ==="
+
+      - name: Upload results artifact
+        if: always() && inputs.dry_run == 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: saleor-publish-results
+          path: scripts/publish_results.json
+          if-no-files-found: ignore
