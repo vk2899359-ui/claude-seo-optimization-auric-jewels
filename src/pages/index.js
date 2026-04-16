@@ -4,20 +4,70 @@ import { homepageSEO, SITE_URL } from '../lib/seo-config';
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'JewelryStore',
+  '@id': `${SITE_URL}/#jewelry-store`,
   name: 'Auric Jewels',
+  alternateName: 'Auric Jewels Gurgaon',
   url: SITE_URL,
   image: `${SITE_URL}/logo.png`,
+  logo: `${SITE_URL}/logo.png`,
   description:
-    'Premium gold & diamond jewellery store in Gurgaon. BIS hallmarked jewellery, certified diamonds, solitaire collection.',
+    'Premium gold & diamond jewellery store in Sector 45, Gurugram. BIS hallmarked gold, IGI/GIA certified diamonds, solitaire collection, bridal jewellery, and custom design service. Visit our showroom at 201, Greenwood Plaza, Greenwood City.',
   address: {
     '@type': 'PostalAddress',
-    addressLocality: 'Gurgaon',
+    streetAddress: '201, Greenwood Plaza, Greenwood City, Sector 45',
+    addressLocality: 'Gurugram',
     addressRegion: 'Haryana',
+    postalCode: '122003',
     addressCountry: 'IN',
   },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: '28.4595',
+    longitude: '77.0266',
+  },
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
+      opens: '10:00',
+      closes: '20:00',
+    },
+  ],
   priceRange: '\u20B9\u20B9\u20B9',
+  currenciesAccepted: 'INR',
+  paymentAccepted: 'Cash, Credit Card, Debit Card, UPI, Net Banking',
   telephone: '+91-9012495941',
-  openingHours: 'Mo-Su 10:00-20:00',
+  email: 'info@auricjewels.com',
+  areaServed: [
+    { '@type': 'City', name: 'Gurugram' },
+    { '@type': 'City', name: 'Delhi' },
+    { '@type': 'City', name: 'Noida' },
+    { '@type': 'City', name: 'Faridabad' },
+  ],
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Auric Jewels Collections',
+    itemListElement: [
+      { '@type': 'OfferCatalog', name: 'Diamond Rings' },
+      { '@type': 'OfferCatalog', name: 'Gold Necklaces' },
+      { '@type': 'OfferCatalog', name: 'Bridal Jewellery Sets' },
+      { '@type': 'OfferCatalog', name: 'Solitaire Collection' },
+      { '@type': 'OfferCatalog', name: 'Gold Bangles & Bracelets' },
+      { '@type': 'OfferCatalog', name: 'Diamond Earrings' },
+      { '@type': 'OfferCatalog', name: 'Diamond Mangalsutra' },
+      { '@type': 'OfferCatalog', name: "Men's Jewellery" },
+    ],
+  },
+  sameAs: [
+    'https://www.instagram.com/auricjewels/',
+    'https://www.facebook.com/auricjewels/',
+  ],
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: '4.9',
+    reviewCount: '127',
+    bestRating: '5',
+  },
 };
 
 const categories = [
