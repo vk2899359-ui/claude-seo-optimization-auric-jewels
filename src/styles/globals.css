@@ -631,3 +631,342 @@ h2 {
   margin-bottom: 0.75rem;
   color: var(--navy);
 }
+
+/* ═══════════════════════════════════════════════════════
+   BLOG INDEX PAGE
+   ═══════════════════════════════════════════════════════ */
+.blog-index-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  max-width: 600px;
+  margin-bottom: 2.5rem;
+  line-height: 1.7;
+}
+
+.blog-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0 0 0.5rem 0;
+}
+
+/* ═══════════════════════════════════════════════════════
+   BLOG ARTICLE PAGE
+   ═══════════════════════════════════════════════════════ */
+.blog-article {
+  max-width: 780px;
+  margin: 0 auto;
+  padding-bottom: 3rem;
+}
+
+.blog-article-header {
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.blog-article-meta {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-top: 0.75rem;
+}
+
+.blog-article-content {
+  font-size: 1.05rem;
+  line-height: 1.85;
+  color: #333;
+}
+
+.blog-article-content h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.5rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--navy);
+}
+
+.blog-article-content h3 {
+  font-size: 1.2rem;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  color: var(--navy);
+}
+
+.blog-article-content p {
+  margin-bottom: 1.25rem;
+}
+
+.blog-article-content a {
+  color: var(--gold);
+  text-decoration: underline;
+}
+
+.blog-article-content a:hover {
+  color: var(--gold-light);
+}
+
+.blog-article-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.95rem;
+}
+
+.blog-article-content th,
+.blog-article-content td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.blog-article-content th {
+  background: var(--navy);
+  color: var(--white);
+  font-weight: 600;
+}
+
+.blog-article-content tr:nth-child(even) {
+  background: var(--cream);
+}
+
+.blog-article-content blockquote {
+  border-left: 4px solid var(--gold);
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  background: var(--cream);
+  font-style: italic;
+  color: #555;
+}
+
+.blog-article-content ul,
+.blog-article-content ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.blog-article-content li {
+  margin-bottom: 0.5rem;
+}
+
+.blog-article-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  margin: 1.5rem 0;
+}
+
+.blog-article-content figure {
+  margin: 1.5rem 0;
+}
+
+.blog-article-content figcaption {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.related-posts {
+  border-top: 1px solid #eee;
+  margin-top: 2rem;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SHOWROOM LANDING PAGE
+   ═══════════════════════════════════════════════════════ */
+.showroom-hero {
+  min-height: 70vh;
+  background: var(--navy);
+  background-image:
+    radial-gradient(ellipse at 60% 40%, rgba(201, 161, 74, 0.1) 0%, transparent 55%),
+    radial-gradient(ellipse at 40% 70%, rgba(201, 161, 74, 0.06) 0%, transparent 50%);
+  display: flex;
+  align-items: center;
+}
+
+.showroom-hero-overlay {
+  width: 100%;
+  padding: 4rem 0;
+}
+
+.showroom-hero h1 {
+  color: var(--white);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  margin: 1rem 0 1.25rem;
+}
+
+.showroom-hero-sub {
+  font-size: clamp(0.9rem, 1.8vw, 1.1rem);
+  color: rgba(245, 241, 232, 0.6);
+  letter-spacing: 1.5px;
+  margin-bottom: 2rem;
+}
+
+.breadcrumbs-light a,
+.breadcrumbs-light span {
+  color: rgba(245, 241, 232, 0.6);
+}
+
+.breadcrumbs-light a {
+  color: var(--gold);
+}
+
+.showroom-about {
+  max-width: 780px;
+  margin: 0 auto;
+  font-size: 1.05rem;
+  line-height: 1.85;
+  color: #444;
+}
+
+.showroom-about p {
+  margin-bottom: 1.25rem;
+}
+
+.showroom-collections-section {
+  background: var(--cream);
+  margin: 0 -1.5rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.showroom-collections {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.showroom-collection-card {
+  background: var(--white);
+  border: 1px solid #eee;
+  border-radius: var(--radius);
+  padding: 2rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.showroom-collection-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+}
+
+.showroom-collection-card h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.15rem;
+  color: var(--navy);
+  margin: 0 0 0.75rem 0;
+}
+
+.showroom-collection-card p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+  margin: 0 0 1rem 0;
+}
+
+.showroom-why-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.showroom-why-card {
+  background: var(--cream);
+  border-radius: var(--radius);
+  padding: 2rem;
+}
+
+.showroom-why-card h3 {
+  font-size: 1.05rem;
+  color: var(--navy);
+  margin: 0 0 0.5rem 0;
+}
+
+.showroom-why-card p {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.showroom-visit-section {
+  background: var(--navy);
+  color: rgba(245, 241, 232, 0.8);
+  margin: 0 -1.5rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.showroom-visit-section .section-title {
+  color: var(--white);
+}
+
+.showroom-visit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+@media (max-width: 700px) {
+  .showroom-visit-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.showroom-visit-info h3,
+.showroom-visit-map h3 {
+  color: var(--gold);
+  font-size: 1rem;
+  margin: 1.5rem 0 0.5rem 0;
+}
+
+.showroom-visit-info h3:first-child,
+.showroom-visit-map h3:first-child {
+  margin-top: 0;
+}
+
+.showroom-visit-info address {
+  font-style: normal;
+  line-height: 1.75;
+}
+
+.showroom-visit-info a {
+  color: var(--gold);
+}
+
+.showroom-faq {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+.showroom-faq-item {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.showroom-faq-item:last-child {
+  border-bottom: none;
+}
+
+.showroom-faq-item h3 {
+  font-size: 1.05rem;
+  color: var(--navy);
+  margin: 0 0 0.5rem 0;
+}
+
+.showroom-faq-item p {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.7;
+  margin: 0;
+}
