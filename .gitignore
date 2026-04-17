@@ -7,3 +7,12 @@ out/
 *.log
 .DS_Store
 .vercel
+
+# SEO indexing scripts: never commit service account keys
+scripts/seo-indexing/service-account.json
+scripts/seo-indexing/*-service-account*.json
+auric-jewels-indexing-*.json
+
+# Python bytecode
+__pycache__/
+*.pyc
