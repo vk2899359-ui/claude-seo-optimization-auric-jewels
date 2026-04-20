@@ -1,57 +1,99 @@
-// Storage module: Vercel KV with in-memory fallback
-let kv = null;
-let useMemory = false;
+// Storage module: Vercel KV / Upstash Redis with in-memory fallback
+let kvClient = null;
+let kvInitialized = false;
+let storageBackend = 'none'; // 'kv', 'memory', or 'none'
 
-// In-memory fallback store (resets on cold starts)
+// In-memory fallback store (resets on cold starts — only useful for local dev)
 const memoryStore = new Map();
 
-async function getKV() {
-  if (kv) return kv;
-  if (useMemory) return null;
+function getKV() {
+  if (kvInitialized) return kvClient;
+  kvInitialized = true;
+
+  // Try both old Vercel KV and new Upstash Redis env var names
+  const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+
+  // Log which env vars exist (presence only, never values)
+  console.log('[Storage] Env var check:', JSON.stringify({
+    KV_REST_API_URL: !!process.env.KV_REST_API_URL,
+    KV_REST_API_TOKEN: !!process.env.KV_REST_API_TOKEN,
+    UPSTASH_REDIS_REST_URL: !!process.env.UPSTASH_REDIS_REST_URL,
+    UPSTASH_REDIS_REST_TOKEN: !!process.env.UPSTASH_REDIS_REST_TOKEN,
+  }));
+
+  if (!url || !token) {
+    console.error('[Storage] FATAL: No KV/Redis credentials found. Dashboard will show 0. Set KV_REST_API_URL+KV_REST_API_TOKEN or UPSTASH_REDIS_REST_URL+UPSTASH_REDIS_REST_TOKEN in Vercel env vars.');
+    storageBackend = 'memory';
+    return null;
+  }
 
   try {
-    if (!process.env.KV_REST_API_URL) {
-      console.warn('KV not configured, using in-memory storage');
-      useMemory = true;
-      return null;
-    }
-    const kvModule = await import('@vercel/kv');
-    kv = kvModule.kv;
-    return kv;
+    const { createClient } = require('@vercel/kv');
+    kvClient = createClient({ url, token });
+    storageBackend = 'kv';
+    console.log('[Storage] KV client created successfully via createClient()');
+    return kvClient;
   } catch (err) {
-    console.warn('KV not configured, using in-memory storage:', err.message);
-    useMemory = true;
+    console.error('[Storage] Failed to create KV client:', err.message);
+    storageBackend = 'memory';
     return null;
   }
 }
 
+function getStorageStatus() {
+  getKV(); // ensure initialized
+  return {
+    backend: storageBackend,
+    kvConnected: kvClient !== null,
+    envVars: {
+      KV_REST_API_URL: !!process.env.KV_REST_API_URL,
+      KV_REST_API_TOKEN: !!process.env.KV_REST_API_TOKEN,
+      UPSTASH_REDIS_REST_URL: !!process.env.UPSTASH_REDIS_REST_URL,
+      UPSTASH_REDIS_REST_TOKEN: !!process.env.UPSTASH_REDIS_REST_TOKEN,
+    },
+  };
+}
+
 // Generic get/set wrappers
 async function kvGet(key) {
-  const store = await getKV();
+  const store = getKV();
   if (store) {
-    return await store.get(key);
+    try {
+      return await store.get(key);
+    } catch (err) {
+      console.error('[Storage] KV GET failed for key:', key, '— error:', err.message);
+      return null;
+    }
   }
   return memoryStore.get(key) || null;
 }
 
 async function kvSet(key, value) {
-  const store = await getKV();
+  const store = getKV();
   if (store) {
-    await store.set(key, value);
+    try {
+      await store.set(key, value);
+    } catch (err) {
+      console.error('[Storage] KV SET failed for key:', key, '— error:', err.message);
+      throw err; // re-throw so callers know storage failed
+    }
   } else {
     memoryStore.set(key, value);
   }
 }
 
 // Store a conversation pair (customer message + bot reply)
-async function storeConversation({ phone, customerMessage, botReply, messageType = 'text' }) {
+async function storeConversation({ phone, customerName, customerMessage, botReply, messageType = 'text' }) {
   const timestamp = Date.now();
   const entry = {
     timestamp,
     phone,
+    customerName: customerName || '',
     customerMessage,
     botReply,
     messageType,
+    status: 'replied',
     date: new Date(timestamp).toISOString(),
   };
 
@@ -65,6 +107,7 @@ async function storeConversation({ phone, customerMessage, botReply, messageType
   const contacts = (await kvGet('contacts')) || {};
   contacts[phone] = {
     phone,
+    customerName: customerName || contacts[phone]?.customerName || '',
     lastMessageTime: timestamp,
     lastMessagePreview: customerMessage.substring(0, 80),
     messageCount: (contacts[phone]?.messageCount || 0) + 1,
@@ -143,4 +186,4 @@ async function getStats() {
   };
 }
 
-module.exports = { storeConversation, getContacts, getMessages, getAllConversations, getStats };
+module.exports = { storeConversation, getContacts, getMessages, getAllConversations, getStats, getStorageStatus };
