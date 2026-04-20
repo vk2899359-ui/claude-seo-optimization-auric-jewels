@@ -1,25 +1,19 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
-Auric Jewels — Fix Duplicate & Oversized SEO Meta Titles/Descriptions
-======================================================================
+Auric Jewels -- Fix Duplicate & Oversized SEO Meta Titles/Descriptions
+=======================================================================
 Audit: 20 Apr 2026
 
-Issues found in local data (21 pages):
+Issues found (21 pages):
   - 18/21 seoTitles exceed 60 chars (Google truncates at ~60)
   - 8/21 seoDescriptions out of 150-160 char target range
   - Page 1 had "Auric Jewels" duplicated in title
   - Page 19 had "Gurgaon" duplicated in title
   - 0 duplicate titles or descriptions detected
 
-This script:
-  1. Fetches all pages from Saleor
-  2. Audits seoTitle / seoDescription per page
-  3. Applies pre-computed fixes for all 21 known pages
-  4. Updates Saleor via pageUpdate mutation
-  5. Reports a full summary
-
-USAGE:
-    python3 scripts/fix-seo-meta.py
+USAGE (Windows):
+    python scripts/fix-seo-meta.py
 
 API: https://auric.thecodemesh.online/graphql/
 """
@@ -28,7 +22,15 @@ import json
 import time
 import urllib.request
 import urllib.error
+import ssl
 import sys
+import io
+
+# Fix Windows console UTF-8 output (handles Rs, em-dash etc.)
+if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+if sys.stderr.encoding and sys.stderr.encoding.lower() != "utf-8":
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
 # ── Config ───────────────────────────────────────────────────
 API = "https://auric.thecodemesh.online/graphql/"
@@ -236,19 +238,20 @@ def gql(query, variables=None):
         payload["variables"] = variables
     req = urllib.request.Request(
         API,
-        data=json.dumps(payload).encode(),
+        data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
         headers={
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {TOKEN}",
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": "Bearer " + TOKEN,
         },
         method="POST",
     )
+    ctx = ssl.create_default_context()
     try:
-        with urllib.request.urlopen(req, timeout=30) as r:
-            return json.loads(r.read())
+        with urllib.request.urlopen(req, context=ctx, timeout=30) as r:
+            return json.loads(r.read().decode("utf-8"))
     except urllib.error.HTTPError as e:
-        body = e.read().decode() if e.fp else ""
-        return {"networkError": f"HTTP {e.code}: {body[:200]}"}
+        body = e.read().decode("utf-8", errors="replace") if e.fp else ""
+        return {"networkError": "HTTP " + str(e.code) + ": " + body[:300]}
     except Exception as e:
         return {"networkError": str(e)}
 
