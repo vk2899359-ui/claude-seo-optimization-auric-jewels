@@ -100,7 +100,9 @@ export default function HomePage() {
       <section className="hero">
         <div className="hero-overlay">
           <div className="hero-content">
+            <span className="hero-eyebrow">Est. 2018 &middot; Gurgaon</span>
             <h1 className="hero-h1">Luxury Gold &amp; Diamond Jewellery in Gurgaon</h1>
+            <div className="hero-ornament" aria-hidden="true"></div>
             <p className="hero-subtitle">
               Certified Diamonds&ensp;|&ensp;BIS Hallmarked Gold&ensp;|&ensp;Gurgaon Showroom
             </p>
