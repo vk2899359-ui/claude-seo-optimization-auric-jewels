@@ -5,11 +5,13 @@ const { storeConversation } = require('./lib/storage');
 //   WHATSAPP_ACCESS_TOKEN  — Meta Graph API access token
 //   WHATSAPP_PHONE_ID      — WhatsApp Business phone number ID
 //   ANTHROPIC_API_KEY      — Claude API key (for AI replies)
+//   BOT_PHONE_NUMBER       — Bot's own number (to prevent reply loops)
 
 const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || 'auric_verify_token';
 const ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN;
 const PHONE_ID = process.env.WHATSAPP_PHONE_ID;
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+const BOT_PHONE_NUMBER = process.env.BOT_PHONE_NUMBER || '9012495941';
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
@@ -24,7 +26,7 @@ function isGoldRateQuery(msg) {
 
 function isRingsQuery(msg) {
   const m = msg.toLowerCase();
-  return m.includes('ring') || m.includes('diamond ring');
+  return m.includes('ring');
 }
 
 function isNecklaceQuery(msg) {
@@ -39,20 +41,20 @@ function isEarringsQuery(msg) {
 
 function isCatalogueQuery(msg) {
   const m = msg.toLowerCase();
-  return m.includes('catalogue') || m.includes('catalog') || m.includes('collection dikhao') ||
-    m.includes('collection') && (m.includes('dikhao') || m.includes('show'));
+  return m.includes('catalogue') || m.includes('catalog') ||
+    (m.includes('collection') && (m.includes('dikhao') || m.includes('show')));
 }
 
 function isAddressQuery(msg) {
   const m = msg.toLowerCase();
-  return m.includes('address') || m.includes('showroom kahan') || m.includes('location') ||
-    m.includes('kahan hai') || m.includes('where') && m.includes('shop');
+  return m.includes('address') || m.includes('showroom kahan') ||
+    m.includes('location') || m.includes('kahan hai');
 }
 
 function isTimingQuery(msg) {
   const m = msg.toLowerCase();
   return m.includes('timing') || m.includes(' open') || m.includes('kab khulta') ||
-    m.includes('kab band') || m.includes('hours') || m.includes('time');
+    m.includes('kab band') || m.includes('hours');
 }
 
 // ── Live gold rate scraper ────────────────────────────────────────────────────
@@ -68,24 +70,20 @@ async function fetchLiveGoldRates() {
   if (!res.ok) throw new Error('GoodReturns fetch failed: ' + res.status);
   const html = await res.text();
 
-  // Parse rates from table rows — GoodReturns uses patterns like "24K Gold" ... "₹XX,XXX"
   const rates = { '24K': null, '22K': null, '18K': null };
 
-  // Try to match rows containing karat labels and rupee amounts
   const rowRe = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
   let rowMatch;
   while ((rowMatch = rowRe.exec(html)) !== null) {
     const row = rowMatch[1];
     const karat = /24\s*K/i.test(row) ? '24K' : /22\s*K/i.test(row) ? '22K' : /18\s*K/i.test(row) ? '18K' : null;
     if (!karat) continue;
-    // Find a rupee amount like ₹70,000 or 70,000
     const priceMatch = row.match(/[₹Rs.]*\s*([\d,]{5,})/);
     if (priceMatch && !rates[karat]) {
       rates[karat] = priceMatch[1].replace(/,/g, '');
     }
   }
 
-  // Fallback: scan entire HTML for karat+price proximity
   if (!rates['24K'] || !rates['22K'] || !rates['18K']) {
     const flatRe = /(?:24|22|18)\s*K[^₹\d]{0,80}[₹Rs.]*\s*([\d,]{5,})/gi;
     let fm;
@@ -103,7 +101,6 @@ async function fetchLiveGoldRates() {
 function formatGoldRateMessage(rates) {
   const now = new Date();
   const dateStr = `${now.getDate()} ${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
-
   const fmt = (val) => val ? `₹${Number(val).toLocaleString('en-IN')}/10g` : 'N/A';
 
   return (
@@ -181,8 +178,7 @@ async function sendWhatsAppImage(to, imageUrl, caption) {
 
 // ── Keyword-based response router ─────────────────────────────────────────────
 
-// Returns { text, imageUrl, imageCaption, followUpText } or null (fall through to AI)
-async function keywordRouter(msg, from) {
+async function keywordRouter(msg) {
   if (isGoldRateQuery(msg)) {
     try {
       const rates = await fetchLiveGoldRates();
@@ -228,7 +224,7 @@ async function keywordRouter(msg, from) {
   if (isAddressQuery(msg)) {
     return {
       text:
-        '📍 *Auric Jewels*\nShop No. 45, Sector 45\nGurugram, Haryana 122003\n\n📞 +91 90124 95941\n🌐 www.auricjewels.com\n\nGoogle Maps: https://maps.app.goo.gl/auricjewels',
+        '📍 *Auric Jewels*\nShop No. 45, Sector 45\nGurugram, Haryana 122003\n\n📞 +91 90124 95941\n🌐 www.auricjewels.com',
     };
   }
 
@@ -238,7 +234,7 @@ async function keywordRouter(msg, from) {
     };
   }
 
-  return null; // fall through to AI
+  return null;
 }
 
 // ── Main handler ──────────────────────────────────────────────────────────────
@@ -259,10 +255,12 @@ module.exports = async function handler(req, res) {
 
   // POST: Incoming WhatsApp messages
   if (req.method === 'POST') {
+    console.log('[Webhook] POST received');
     try {
       const body = req.body;
 
       if (body?.object !== 'whatsapp_business_account') {
+        console.log('[Webhook] Ignoring non-whatsapp object:', body?.object);
         return res.status(200).send('OK');
       }
 
@@ -271,13 +269,37 @@ module.exports = async function handler(req, res) {
         const changes = entry.changes || [];
         for (const change of changes) {
           const value = change.value;
+
+          // Skip status update webhooks (sent/delivered/read receipts)
+          if (value?.statuses) {
+            console.log('Skipping status update webhook');
+            continue;
+          }
+
           if (!value?.messages) continue;
 
           const messages = value.messages;
+          const contacts = value.contacts || [];
+
+          // Build phone→name lookup
+          const contactNames = {};
+          for (const c of contacts) {
+            if (c.wa_id && c.profile?.name) {
+              contactNames[c.wa_id] = c.profile.name;
+            }
+          }
 
           for (const message of messages) {
             const from = message.from;
             const messageType = message.type || 'text';
+            const customerName = contactNames[from] || '';
+
+            // Skip messages from the bot's own number to prevent reply loops
+            if (from === BOT_PHONE_NUMBER) {
+              console.log('Skipping message from bot itself:', from);
+              continue;
+            }
+
             let customerMessage = '';
 
             if (message.type === 'text') {
@@ -301,10 +323,9 @@ module.exports = async function handler(req, res) {
             let botReply = '';
 
             // Try keyword router first
-            const kwResult = await keywordRouter(customerMessage, from);
+            const kwResult = await keywordRouter(customerMessage);
 
             if (kwResult) {
-              // Send image if present
               if (kwResult.imageUrl) {
                 try {
                   await sendWhatsAppImage(from, kwResult.imageUrl, kwResult.imageCaption || '');
@@ -312,7 +333,6 @@ module.exports = async function handler(req, res) {
                   console.error('Image send error:', err.message);
                 }
               }
-              // Send main text if present
               if (kwResult.text) {
                 try {
                   await sendWhatsAppMessage(from, kwResult.text);
@@ -321,7 +341,6 @@ module.exports = async function handler(req, res) {
                 }
                 botReply = kwResult.text;
               }
-              // Send follow-up text if present (e.g. catalogue link)
               if (kwResult.followUpText) {
                 try {
                   await sendWhatsAppMessage(from, kwResult.followUpText);
@@ -347,10 +366,18 @@ module.exports = async function handler(req, res) {
             }
 
             // Store conversation
+            console.log('[Webhook] Storing conversation for:', from);
             try {
-              await storeConversation({ phone: from, customerMessage, botReply, messageType });
+              const stored = await storeConversation({
+                phone: from,
+                customerName,
+                customerMessage,
+                botReply,
+                messageType,
+              });
+              console.log('[Webhook] Stored successfully:', JSON.stringify({ phone: from, timestamp: stored?.timestamp }));
             } catch (err) {
-              console.error('Storage error:', err.message);
+              console.error('[Webhook] STORAGE FAILED:', err.message, err.stack);
             }
           }
         }
