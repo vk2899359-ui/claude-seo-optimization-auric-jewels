@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-# Auric Jewels -- Fix SEO Meta Titles & Descriptions (Standalone)
+# Auric Jewels -- Fix SEO Meta Titles & Descriptions
+# Fixes Cloudflare error 1010 with browser-like headers
 # Run: python fix-seo.py
-# API: https://auric.thecodemesh.online/graphql/
 
 import json, time, urllib.request, urllib.error, ssl, sys, io
 
@@ -13,10 +13,23 @@ if hasattr(sys.stderr, 'buffer'):
 API   = 'https://auric.thecodemesh.online/graphql/'
 TOKEN = 'rlcLjvXb3wMMHMf1PBsePS8UdTmOBb'
 
+# Browser-like headers to bypass Cloudflare 1010
+HEADERS = {
+    'Content-Type':  'application/json',
+    'Authorization': 'Bearer ' + TOKEN,
+    'User-Agent':    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+    'Accept':        'application/json, */*',
+    'Accept-Language': 'en-US,en;q=0.9',
+    'Origin':        'https://auric.thecodemesh.online',
+    'Referer':       'https://auric.thecodemesh.online/graphql/',
+    'Cache-Control': 'no-cache',
+    'Pragma':        'no-cache',
+}
+
 FIXES = {
     'best-diamond-jewellery-showroom-gurgaon': {
         'seoTitle':       'Best Diamond Jewellery Showroom Gurgaon | Auric Jewels',
-        'seoDescription': 'Best diamond jewellery showroom in Gurgaon. Auric Jewels — IGI/GIA certified diamonds, BIS hallmarked gold & solitaire rings. Visit Sector 45 or shop online.',
+        'seoDescription': 'Best diamond jewellery showroom in Gurgaon. Auric Jewels - IGI/GIA certified diamonds, BIS hallmarked gold & solitaire rings. Visit Sector 45 or shop online.',
     },
     'solitaire-ring-buying-guide-gurgaon': {
         'seoTitle':       'Solitaire Ring Guide Gurgaon | Cuts & Price | Auric',
@@ -80,23 +93,23 @@ FIXES = {
     },
     'lab-grown-vs-natural-diamonds-comparison-india': {
         'seoTitle':       'Lab-Grown vs Natural Diamonds India 2026 | Auric Jewels',
-        'seoDescription': 'Lab-grown vs natural diamonds — price, resale value, certification & which to buy. Full 2026 comparison guide. Certified diamonds at Auric Jewels Gurgaon.',
+        'seoDescription': 'Lab-grown vs natural diamonds - price, resale value, certification & which to buy. Full 2026 comparison guide. Certified diamonds at Auric Jewels Gurgaon.',
     },
     'jewellery-trends-india-2026': {
         'seoTitle':       'Top 10 Jewellery Trends India 2026 | Auric Jewels',
-        'seoDescription': 'Discover the top 10 jewellery trends in India for 2026 — layered necklaces, sculptural earrings, Polki revival & more. Explore trending designs at Auric Jewels.',
+        'seoDescription': 'Top 10 jewellery trends in India for 2026 - layered necklaces, sculptural earrings, Polki revival & more. Explore trending designs at Auric Jewels Gurgaon.',
     },
     'gold-jewellery-investment-2026-gurgaon': {
         'seoTitle':       'Gold Jewellery Investment 2026 Gurgaon | Auric Jewels',
-        'seoDescription': 'Gold jewellery as investment in 2026 — price trends, BIS hallmark, making charges, resale value & smart buying guide. Trusted jeweller Auric Jewels Gurgaon.',
+        'seoDescription': 'Gold jewellery as investment in 2026 - price trends, BIS hallmark, making charges, resale value & smart buying guide. Trusted jeweller Auric Jewels Gurgaon.',
     },
     'platinum-jewellery-men-gurgaon': {
         'seoTitle':       'Platinum Jewellery for Men Gurgaon | Auric Jewels',
-        'seoDescription': "Explore platinum jewellery for men — chains, bracelets, rings & cufflinks. Durable, hypoallergenic & sophisticated. Shop men's platinum at Auric Jewels Gurgaon.",
+        'seoDescription': "Explore platinum jewellery for men - chains, bracelets, rings & cufflinks. Durable, hypoallergenic & sophisticated. Shop men's platinum at Auric Jewels Gurgaon.",
     },
     'layered-necklace-styling-guide-indian-women': {
         'seoTitle':       'Layered Necklace Styling Guide India | Auric Jewels',
-        'seoDescription': 'Master layered necklace styling — rules, combinations, Indian & Western looks. Gold & diamond layering tips for 2026. Shop necklaces at Auric Jewels Gurgaon.',
+        'seoDescription': 'Master layered necklace styling - rules, combinations, Indian & Western looks. Gold & diamond layering tips for 2026. Shop necklaces at Auric Jewels Gurgaon.',
     },
 }
 
@@ -107,7 +120,7 @@ def gql(query, variables=None):
     req = urllib.request.Request(
         API,
         data=json.dumps(payload, ensure_ascii=False).encode('utf-8'),
-        headers={'Content-Type': 'application/json; charset=utf-8', 'Authorization': 'Bearer ' + TOKEN},
+        headers=HEADERS,
         method='POST',
     )
     ctx = ssl.create_default_context()
@@ -116,69 +129,69 @@ def gql(query, variables=None):
             return json.loads(r.read().decode('utf-8'))
     except urllib.error.HTTPError as e:
         body = e.read().decode('utf-8', errors='replace') if e.fp else ''
-        return {'networkError': 'HTTP ' + str(e.code) + ': ' + body[:300]}
+        return {'networkError': 'HTTP ' + str(e.code) + ' | ' + body[:400]}
     except Exception as e:
         return {'networkError': str(e)}
 
-def fetch_pages():
-    print('Fetching pages from Saleor...')
-    pages, cursor = [], None
-    while True:
-        after = ', after: "' + cursor + '"' if cursor else ''
-        q = '{pages(first:100' + after + '){pageInfo{hasNextPage endCursor}edges{node{id slug title seoTitle seoDescription}}}}'
-        r = gql(q)
-        if 'networkError' in r:
-            print('  ERROR:', r['networkError'])
-            return None
-        data = (r.get('data') or {}).get('pages', {})
-        for edge in data.get('edges', []):
-            pages.append(edge['node'])
-        pi = data.get('pageInfo', {})
-        if pi.get('hasNextPage'):
-            cursor = pi['endCursor']
-        else:
-            break
-    print('  Fetched', len(pages), 'pages')
-    return pages
-
-def update_page(page_id, seo_title, seo_description):
-    q = 'mutation pageUpdate($id:ID!,$input:PageInput!){pageUpdate(id:$id,input:$input){page{id slug seoTitle seoDescription}errors{field message}}}'
-    return gql(q, {'id': page_id, 'input': {'seoTitle': seo_title, 'seoDescription': seo_description}})
-
-print('=' * 65)
+print('=' * 60)
 print('AURIC JEWELS -- SEO Meta Fix  |  20 Apr 2026')
-print('=' * 65)
+print('=' * 60)
 
-pages = fetch_pages()
-if not pages:
-    print('Cannot connect to Saleor. Run this from your local machine (not a sandbox).')
+print('\n[1] Fetching pages from Saleor...')
+r = gql('{pages(first:100){pageInfo{hasNextPage}edges{node{id slug seoTitle seoDescription}}}}')
+if 'networkError' in r:
+    print('ERROR:', r['networkError'])
     sys.exit(1)
+edges = r.get('data', {}).get('pages', {}).get('edges', [])
+pages = [(e['node']['slug'], e['node']['id'], e['node'].get('seoTitle',''), e['node'].get('seoDescription','')) for e in edges]
+print('  Found', len(pages), 'pages')
 
-slug_map = {p['slug']: p['id'] for p in pages}
-fixed, skipped, failed = [], [], []
+# Print current state
+print('\n[2] Current SEO audit:')
+for slug, pid, t, d in pages:
+    issues = []
+    if not t: issues.append('NO_TITLE')
+    elif len(t) > 60: issues.append('TITLE_TOO_LONG(%d)' % len(t))
+    if not d: issues.append('NO_DESC')
+    elif len(d) < 150: issues.append('DESC_TOO_SHORT(%d)' % len(d))
+    elif len(d) > 160: issues.append('DESC_TOO_LONG(%d)' % len(d))
+    status = ', '.join(issues) if issues else 'OK'
+    print('  [%s] %s' % (status, slug))
 
-print('\nApplying fixes:')
+slug_map = {slug: pid for slug, pid, t, d in pages}
+fixed = skipped = failed = 0
+
+print('\n[3] Applying fixes:')
 for slug, fix in FIXES.items():
     if slug not in slug_map:
-        skipped.append(slug)
-        print('  SKIP ', slug, '(not in Saleor)')
+        print('  SKIP  ' + slug + ' (not found in Saleor)')
+        skipped += 1
         continue
-    r = update_page(slug_map[slug], fix['seoTitle'], fix['seoDescription'])
-    if 'networkError' in r:
-        failed.append(slug)
-        print('  FAIL ', slug, r['networkError'])
-        continue
-    errs = (((r.get('data') or {}).get('pageUpdate') or {}).get('errors') or [])
-    if errs:
-        failed.append(slug)
-        print('  FAIL ', slug, ';'.join(e.get('message','?') for e in errs))
-    else:
-        fixed.append(slug)
-        print('  OK   ', slug)
-    time.sleep(0.3)
 
-print('\n' + '=' * 65)
-print('DONE  fixed=%d  skipped=%d  failed=%d' % (len(fixed), len(skipped), len(failed)))
-if failed:
-    print('FAILED:', ', '.join(failed))
-print('=' * 65)
+    res = gql(
+        'mutation pageUpdate($id:ID!,$input:PageInput!){pageUpdate(id:$id,input:$input){page{id slug seoTitle seoDescription}errors{field message}}}',
+        {'id': slug_map[slug], 'input': {'seoTitle': fix['seoTitle'], 'seoDescription': fix['seoDescription']}}
+    )
+
+    if 'networkError' in res:
+        print('  FAIL  ' + slug + ' -- ' + res['networkError'][:120])
+        failed += 1
+        continue
+
+    errs = (((res.get('data') or {}).get('pageUpdate') or {}).get('errors') or [])
+    if errs:
+        msgs = '; '.join(e.get('message', '?') for e in errs)
+        print('  FAIL  ' + slug + ' -- ' + msgs)
+        failed += 1
+    else:
+        updated = ((res.get('data') or {}).get('pageUpdate') or {}).get('page') or {}
+        print('  OK    ' + slug)
+        print('         title: ' + (updated.get('seoTitle') or ''))
+    time.sleep(0.4)
+
+print('\n' + '=' * 60)
+print('SUMMARY')
+print('  Fixed   : %d' % fixed)
+print('  Skipped : %d' % skipped)
+print('  Failed  : %d' % failed)
+print('=' * 60)
