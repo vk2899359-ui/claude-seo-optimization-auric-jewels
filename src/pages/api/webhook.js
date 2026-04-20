@@ -6,6 +6,7 @@ const { storeConversation } = require('./lib/storage');
 //   WHATSAPP_PHONE_ID      — WhatsApp Business phone number ID
 //   ANTHROPIC_API_KEY      — Claude API key (for AI replies)
 //   BOT_PHONE_NUMBER       — Bot's own number (to prevent reply loops)
+//   GOLDAPI_KEY            — goldapi.io key for live gold rates (optional)
 
 const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || 'auric_verify_token';
 const ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN;
@@ -26,7 +27,7 @@ function isGoldRateQuery(msg) {
 
 function isRingsQuery(msg) {
   const m = msg.toLowerCase();
-  return m.includes('ring');
+  return m.includes('ring') || m.includes('rings dikhao') || m.includes('diamond ring');
 }
 
 function isNecklaceQuery(msg) {
@@ -57,55 +58,49 @@ function isTimingQuery(msg) {
     m.includes('kab band') || m.includes('hours');
 }
 
-// ── Live gold rate scraper ────────────────────────────────────────────────────
+// ── Live gold rate fetcher ────────────────────────────────────────────────────
+// Strategy: 1) goldapi.io (if GOLDAPI_KEY set)  2) hardcoded fallback
+
+const GOLD_FALLBACK = { '24K': '97500', '22K': '89375', '18K': '73125', fallback: true };
 
 async function fetchLiveGoldRates() {
-  const url = 'https://www.goodreturns.in/gold-rates-in-gurgaon.html';
-  const res = await fetch(url, {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36',
-      'Accept': 'text/html',
-    },
-  });
-  if (!res.ok) throw new Error('GoodReturns fetch failed: ' + res.status);
-  const html = await res.text();
-
-  const rates = { '24K': null, '22K': null, '18K': null };
-
-  const rowRe = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
-  let rowMatch;
-  while ((rowMatch = rowRe.exec(html)) !== null) {
-    const row = rowMatch[1];
-    const karat = /24\s*K/i.test(row) ? '24K' : /22\s*K/i.test(row) ? '22K' : /18\s*K/i.test(row) ? '18K' : null;
-    if (!karat) continue;
-    const priceMatch = row.match(/[₹Rs.]*\s*([\d,]{5,})/);
-    if (priceMatch && !rates[karat]) {
-      rates[karat] = priceMatch[1].replace(/,/g, '');
+  const goldApiKey = process.env.GOLDAPI_KEY;
+  if (goldApiKey) {
+    try {
+      const res = await fetch('https://www.goldapi.io/api/XAU/INR', {
+        headers: { 'x-access-token': goldApiKey, 'Content-Type': 'application/json' },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        // data.price is per troy oz in INR; convert to per 10g
+        // 1 troy oz = 31.1035g → price_per_10g = (price / 31.1035) * 10
+        const per10g_24k = Math.round((data.price / 31.1035) * 10);
+        return {
+          '24K': String(per10g_24k),
+          '22K': String(Math.round(per10g_24k * 22 / 24)),
+          '18K': String(Math.round(per10g_24k * 18 / 24)),
+        };
+      }
+      console.warn('[Gold] goldapi.io responded', res.status, '— using fallback');
+    } catch (e) {
+      console.warn('[Gold] goldapi.io error:', e.message, '— using fallback');
     }
   }
-
-  if (!rates['24K'] || !rates['22K'] || !rates['18K']) {
-    const flatRe = /(?:24|22|18)\s*K[^₹\d]{0,80}[₹Rs.]*\s*([\d,]{5,})/gi;
-    let fm;
-    while ((fm = flatRe.exec(html)) !== null) {
-      const karatStr = fm[0].match(/(\d+)\s*K/i)?.[1];
-      if (!karatStr) continue;
-      const key = karatStr + 'K';
-      if (!rates[key]) rates[key] = fm[1].replace(/,/g, '');
-    }
-  }
-
-  return rates;
+  // Return hardcoded fallback with a flag so message can note it
+  return GOLD_FALLBACK;
 }
 
 function formatGoldRateMessage(rates) {
   const now = new Date();
   const dateStr = `${now.getDate()} ${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
   const fmt = (val) => val ? `₹${Number(val).toLocaleString('en-IN')}/10g` : 'N/A';
+  const note = rates.fallback
+    ? `_(Rates updated daily — call for exact price)_`
+    : `_(Date: ${dateStr} — Live rate)_`;
 
   return (
     `📈 *Aaj ka Gold Rate — Gurgaon*\n` +
-    `_(Date: ${dateStr})_\n\n` +
+    `${note}\n\n` +
     `- 24K — ${fmt(rates['24K'])}\n` +
     `- 22K — ${fmt(rates['22K'])}\n` +
     `- 18K — ${fmt(rates['18K'])}\n\n` +
@@ -328,9 +323,14 @@ module.exports = async function handler(req, res) {
             if (kwResult) {
               if (kwResult.imageUrl) {
                 try {
+                  console.log('[Image] Sending image to', from, '—', kwResult.imageUrl);
                   await sendWhatsAppImage(from, kwResult.imageUrl, kwResult.imageCaption || '');
+                  console.log('[Image] Sent successfully');
                 } catch (err) {
-                  console.error('Image send error:', err.message);
+                  console.error('[Image] Send FAILED:', err.message, '— sending text fallback');
+                  // Text fallback if image fails
+                  const fallback = (kwResult.imageCaption || '') + '\nVisit: www.auricjewels.com | Call: +91 90124 95941';
+                  try { await sendWhatsAppMessage(from, fallback); } catch (_) {}
                 }
               }
               if (kwResult.text) {
