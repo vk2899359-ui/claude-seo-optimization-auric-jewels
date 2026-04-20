@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import SEOHead from '../components/SEOHead';
 import { homepageSEO, SITE_URL } from '../lib/seo-config';
 
@@ -85,6 +86,20 @@ const blogPosts = [
 ];
 
 export default function HomePage() {
+  useEffect(() => {
+    const container = document.getElementById('heroParticles');
+    if (!container) return;
+    const particles = [];
+    for (let i = 0; i < 45; i++) {
+      const p = document.createElement('span');
+      p.className = 'hero-particle';
+      p.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;width:${1+Math.random()*2}px;height:${1+Math.random()*2}px;animation-delay:${Math.random()*5}s;animation-duration:${3+Math.random()*5}s;opacity:${0.25+Math.random()*0.5}`;
+      container.appendChild(p);
+      particles.push(p);
+    }
+    return () => particles.forEach(p => p.remove());
+  }, []);
+
   return (
     <>
       <SEOHead
@@ -95,23 +110,40 @@ export default function HomePage() {
       />
 
       {/* ═══════════════════════════════════════════════════
-          1. HERO SECTION
+          1. HERO SECTION — Cinematic Luxury Dark
           ═══════════════════════════════════════════════════ */}
       <section className="hero">
+        <div id="heroParticles" className="hero-particles" aria-hidden="true"></div>
+        <div className="hero-glow" aria-hidden="true"></div>
         <div className="hero-overlay">
           <div className="hero-content">
-            <span className="hero-eyebrow">Est. 2018 &middot; Gurgaon</span>
-            <h1 className="hero-h1">Luxury Gold &amp; Diamond Jewellery in Gurgaon</h1>
-            <div className="hero-ornament" aria-hidden="true"></div>
+            <div className="hero-eyebrow">
+              <span className="hero-eyebrow-line" aria-hidden="true"></span>
+              MAISON AURIC &middot; EST. MMXXVI
+              <span className="hero-eyebrow-line" aria-hidden="true"></span>
+            </div>
+            <h1 className="hero-h1">
+              Where Timeless<br />
+              <em className="hero-accent">Elegance</em><br />
+              Meets Modern Luxury
+            </h1>
+            <div className="hero-ornament" aria-hidden="true">
+              <span className="hero-ornament-diamond"></span>
+            </div>
             <p className="hero-subtitle">
-              Certified Diamonds&ensp;|&ensp;BIS Hallmarked Gold&ensp;|&ensp;Gurgaon Showroom
+              A private atelier of objects cast in 18k gold and lit by responsibly sourced diamonds — for the few who notice the difference.
             </p>
             <div className="hero-ctas">
-              <a href="/collections/best-sellers" className="btn btn-primary">Explore Collections</a>
-              <a href="#showroom" className="btn btn-outline">Visit Our Showroom</a>
+              <a href="/collections/best-sellers" className="btn-hero-primary">
+                EXPLORE THE COLLECTION &nbsp;→
+              </a>
+              <a href="#showroom" className="btn-hero-outline">
+                BOOK A PRIVATE VIEWING
+              </a>
             </div>
           </div>
         </div>
+        <div className="hero-scroll-indicator" aria-hidden="true">↓ &nbsp;SCROLL</div>
       </section>
 
       {/* ═══════════════════════════════════════════════════
