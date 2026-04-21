@@ -90,6 +90,52 @@ def gql(query, variables=None):
         return {"error": str(e)}
 
 
+
+def find_page_by_slug(slug):
+    """Return existing page ID for a slug, or None."""
+    r = gql('{ pages(first: 100) { edges { node { id slug } } } }')
+    edges = ((r.get("data") or {}).get("pages") or {}).get("edges", [])
+    for e in edges:
+        if e["node"]["slug"] == slug:
+            return e["node"]["id"]
+    return None
+
+
+def update_page(page_id, content_json):
+    mutation = """
+    mutation PageUpdate($id: ID!, $input: PageInput!) {
+        pageUpdate(id: $id, input: $input) {
+            page { id slug title }
+            errors { field message code }
+        }
+    }"""
+    variables = {"id": page_id, "input": {
+        "title":       PAGE["title"],
+        "isPublished": True,
+        "content":     content_json,
+        "seo": {"title": PAGE["seoTitle"], "description": PAGE["seoDescription"]},
+    }}
+    r = gql(mutation, variables)
+    if "httpError" in r or "error" in r:
+        print(f"  FAILED: {r}")
+        sys.exit(1)
+    pu = (r.get("data") or {}).get("pageUpdate", {})
+    if pu.get("errors"):
+        err = pu["errors"][0]
+        if err.get("code") == "UNIQUE":
+            print(f"  Slug already exists — updating instead ...")
+            page_id = find_page_by_slug(PAGE["slug"])
+            if not page_id:
+                print(f"  Could not find existing page. Aborting.")
+                sys.exit(1)
+            return update_page(page_id, content_json)
+        print(f"  SALEOR ERROR: {err.get('field')} — {err.get('message')} ({err.get('code')})")
+        sys.exit(1)
+    page = pu.get("page")
+    print(f"  UPDATED  id={page['id']}")
+    print(f"  URL: https://www.auricjewels.com/page/{PAGE['slug']}")
+    return page["id"]
+
 def create_page():
     content_json = json.dumps({
         "blocks": [{"type": "rawHtml", "data": {"html": PAGE["content"]}}]
