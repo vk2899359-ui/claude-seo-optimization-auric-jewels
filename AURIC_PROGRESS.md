@@ -15,9 +15,8 @@ Updated `src/lib/seo-config.js` `homepageSEO` object:
 | `title` | Luxury Gold & Diamond Jewellery in Gurgaon \| Auric Jewels | **Auric Jewels Gurgaon \| BIS Hallmarked Gold & IGI Certified Diamond Jewellery** |
 | `description` | Shop luxury gold & diamond jewellery in Gurgaon… | **Shop BIS hallmarked gold and IGI/GIA certified diamond jewellery at Auric Jewels, Sector 45 Gurgaon. Bridal, daily wear & gifting collections. Visit showroom or WhatsApp for expert guidance.** |
 
-**Saleor CMS homepage update script** also created at:
-`scripts/task1-homepage-seo-saleor.py`
-→ Run from Windows machine: `python scripts/task1-homepage-seo-saleor.py`
+**Note:** Saleor CMS has no standalone homepage page — homepage SEO is
+controlled entirely by `src/lib/seo-config.js` (Next.js). Code change above is sufficient.
 
 ---
 
@@ -31,18 +30,18 @@ Updated `src/lib/seo-config.js` `homepageSEO` object:
 
 ### Pages Created (run each script to publish to Saleor):
 
-| # | Slug | Script | Status |
-|---|------|--------|--------|
-| 1 | bestsellers-jewellery-gurgaon | `page-01-bestsellers.py` | ⏳ Run locally |
-| 2 | daily-wear-jewellery-gurgaon | `page-02-daily-wear.py` | ⏳ Run locally |
-| 3 | gifts-under-25000-jewellery | `page-03-gifts-under-25000.py` | ⏳ Run locally |
-| 4 | gifts-under-50000-jewellery | `page-04-gifts-under-50000.py` | ⏳ Run locally |
-| 5 | bridal-jewellery-gurgaon | `page-05-bridal.py` | ⏳ Run locally |
-| 6 | diamond-jewellery-gurgaon-collection | `page-06-diamond-collection.py` | ⏳ Run locally |
-| 7 | office-wear-jewellery | `page-07-office-wear.py` | ⏳ Run locally |
-| 8 | lightweight-gold-jewellery | `page-08-lightweight-gold.py` | ⏳ Run locally |
-| 9 | anniversary-gift-jewellery-gurgaon | `page-09-anniversary.py` | ⏳ Run locally |
-| 10 | new-arrivals-jewellery-gurgaon | `page-10-new-arrivals.py` | ⏳ Run locally |
+| # | Slug | Saleor Page ID | Status |
+|---|------|----------------|--------|
+| 1 | bestsellers-jewellery-gurgaon | UGFnZTo4Nw== | ✅ PUBLISHED |
+| 2 | daily-wear-jewellery-gurgaon | UGFnZTo4OA== | ✅ PUBLISHED |
+| 3 | gifts-under-25000-jewellery | — | ✅ PUBLISHED |
+| 4 | gifts-under-50000-jewellery | — | ✅ PUBLISHED |
+| 5 | bridal-jewellery-gurgaon | UGFnZToyMg== | ✅ UPDATED (existed) |
+| 6 | diamond-jewellery-gurgaon-collection | UGFnZTo5MQ== | ✅ PUBLISHED |
+| 7 | office-wear-jewellery | — | ✅ PUBLISHED |
+| 8 | lightweight-gold-jewellery | — | ✅ PUBLISHED |
+| 9 | anniversary-gift-jewellery-gurgaon | — | ✅ PUBLISHED |
+| 10 | new-arrivals-jewellery-gurgaon | — | ✅ PUBLISHED |
 
 ### SEO Specifications (all pages):
 
