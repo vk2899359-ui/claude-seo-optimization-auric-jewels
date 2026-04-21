@@ -81,7 +81,15 @@ def gql(query, variables=None):
     req = urllib.request.Request(
         API,
         data=json.dumps(payload).encode(),
-        headers={"Content-Type": "application/json", "Authorization": f"Bearer {TOKEN}"},
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {TOKEN}",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+            "Accept": "application/json, */*",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Origin": "https://auric.thecodemesh.online",
+            "Referer": "https://auric.thecodemesh.online/",
+        },
         method="POST",
     )
     try:
