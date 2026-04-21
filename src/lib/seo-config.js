@@ -9,10 +9,10 @@ const DEFAULT_OG_IMAGE = '/images/auric-jewels-og.jpg';
 
 // ─── HOMEPAGE ───────────────────────────────────────────────
 export const homepageSEO = {
-  title: 'Luxury Gold & Diamond Jewellery in Gurgaon | Auric Jewels',
+  title: 'Auric Jewels Gurgaon | BIS Hallmarked Gold & IGI Certified Diamond Jewellery',
   h1: 'Luxury Gold & Diamond Jewellery in Gurgaon | Auric Jewels',
   description:
-    'Shop luxury gold & diamond jewellery in Gurgaon. Explore rings, earrings, necklaces, bracelets & bridal sets at Auric Jewels. BIS hallmarked. Visit our showroom.',
+    'Shop BIS hallmarked gold and IGI/GIA certified diamond jewellery at Auric Jewels, Sector 45 Gurgaon. Bridal, daily wear & gifting collections. Visit showroom or WhatsApp for expert guidance.',
   canonical: SITE_URL,
 };
 
