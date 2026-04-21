@@ -13,7 +13,7 @@ PAGE_TYPE_ID = "UGFnZVR5cGU6Ng=="
 PAGE = {
     "slug": "gifts-under-50000-jewellery",
     "title": "Premium Jewellery Gifts Under ₹50,000 | Auric Jewels",
-    "seoTitle": "Premium Jewellery Gifts Under ₹50,000 | Diamonds & Gold | Auric Jewels Gurgaon",
+    "seoTitle": "Premium Jewellery Gifts Under ₹50,000 | Diamonds & Gold | Auric Jewels",
     "seoDescription": (
         "Shop premium jewellery gifts under ₹50,000 at Auric Jewels, Sector 45 Gurgaon. "
         "Diamond tennis bracelets, gold necklaces, solitaire pendants & more — "

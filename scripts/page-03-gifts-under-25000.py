@@ -13,7 +13,7 @@ PAGE_TYPE_ID = "UGFnZVR5cGU6Ng=="
 PAGE = {
     "slug": "gifts-under-25000-jewellery",
     "title": "Jewellery Gifts Under ₹25,000 | Perfect for Every Occasion",
-    "seoTitle": "Jewellery Gifts Under ₹25,000 | Gold & Diamond Gifting | Auric Jewels Gurgaon",
+    "seoTitle": "Jewellery Gifts Under ₹25,000 | Gold & Diamond Gifting | Auric Jewels",
     "seoDescription": (
         "Find the perfect jewellery gift under ₹25,000 at Auric Jewels, Sector 45 Gurgaon. "
         "Diamond studs, gold pendants, bracelets & chains — hallmarked & certified, "

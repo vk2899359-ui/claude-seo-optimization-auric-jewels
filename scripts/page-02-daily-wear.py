@@ -13,7 +13,7 @@ PAGE_TYPE_ID = "UGFnZVR5cGU6Ng=="
 PAGE = {
     "slug": "daily-wear-jewellery-gurgaon",
     "title": "Daily Wear Gold & Diamond Jewellery | Lightweight Designs",
-    "seoTitle": "Daily Wear Gold & Diamond Jewellery Gurgaon | Lightweight | Auric Jewels",
+    "seoTitle": "Daily Wear Gold & Diamond Jewellery Gurgaon | Auric Jewels",
     "seoDescription": (
         "Shop daily wear gold & diamond jewellery at Auric Jewels, Sector 45 Gurgaon. "
         "Lightweight 18K & 22K gold designs — studs, chains, bangles & pendants for "

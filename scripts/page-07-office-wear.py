@@ -13,7 +13,7 @@ PAGE_TYPE_ID = "UGFnZVR5cGU6Ng=="
 PAGE = {
     "slug": "office-wear-jewellery",
     "title": "Office Wear Jewellery | Subtle Gold & Diamond Pieces",
-    "seoTitle": "Office Wear Jewellery Gurgaon | Subtle Gold & Diamond Pieces | Auric Jewels",
+    "seoTitle": "Office Wear Jewellery Gurgaon | Gold & Diamond | Auric Jewels",
     "seoDescription": (
         "Shop office wear jewellery at Auric Jewels, Sector 45 Gurgaon. Subtle gold & diamond "
         "studs, slim chains, stacking rings & bracelets perfect for the professional woman. "

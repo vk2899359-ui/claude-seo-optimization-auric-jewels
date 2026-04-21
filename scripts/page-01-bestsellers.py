@@ -13,7 +13,7 @@ PAGE_TYPE_ID   = "UGFnZVR5cGU6Ng=="
 PAGE = {
     "slug": "bestsellers-jewellery-gurgaon",
     "title": "Bestselling Jewellery in Gurgaon | Auric Jewels",
-    "seoTitle": "Bestselling Jewellery Gurgaon | Gold & Diamond Top Picks | Auric Jewels",
+    "seoTitle": "Bestselling Jewellery Gurgaon | Gold & Diamond | Auric Jewels",
     "seoDescription": (
         "Explore bestselling gold & diamond jewellery at Auric Jewels, Sector 45 Gurgaon. "
         "BIS hallmarked, IGI/GIA certified. Solitaire rings, diamond earrings & bridal sets — "

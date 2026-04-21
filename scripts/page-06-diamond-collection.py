@@ -13,7 +13,7 @@ PAGE_TYPE_ID = "UGFnZVR5cGU6Ng=="
 PAGE = {
     "slug": "diamond-jewellery-gurgaon-collection",
     "title": "Diamond Jewellery Collection Gurgaon | IGI/GIA Certified",
-    "seoTitle": "Diamond Jewellery Collection Gurgaon | IGI/GIA Certified | Auric Jewels",
+    "seoTitle": "Diamond Jewellery Collection | IGI/GIA Certified | Auric Jewels",
     "seoDescription": (
         "Explore Auric Jewels' certified diamond jewellery collection in Gurgaon. "
         "IGI & GIA certified solitaires, pendants, earrings & bracelets in 18K gold. "
