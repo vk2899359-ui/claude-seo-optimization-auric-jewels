@@ -1,0 +1,25 @@
+name: Assign Products to Collections
+
+on:
+  workflow_dispatch:  # manual trigger from GitHub Actions UI
+
+jobs:
+  assign:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run product-to-collection assignment
+        env:
+          SALEOR_URL: https://auric.thecodemesh.online/graphql/
+          SALEOR_TOKEN: ${{ secrets.SALEOR_AUTH_TOKEN }}
+          SALEOR_CHANNEL: franchise1
+        run: python scripts/assign-products-to-collections.py

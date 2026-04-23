@@ -12,14 +12,15 @@ Mapping rules:
 - Solitaire Rings      → "solitaire" in name
 """
 
+import os
 import sys
 import json
 import time
 import requests
 
-GRAPHQL_URL = "https://auric.thecodemesh.online/graphql/"
-AUTH_TOKEN = "rlcLjvXb3wMMHMf1PBsePS8UdTmOBb"
-CHANNEL = "franchise1"
+GRAPHQL_URL = os.getenv("SALEOR_URL", "https://auric.thecodemesh.online/graphql/")
+AUTH_TOKEN = os.getenv("SALEOR_TOKEN", "rlcLjvXb3wMMHMf1PBsePS8UdTmOBb")
+CHANNEL = os.getenv("SALEOR_CHANNEL", "franchise1")
 
 HEADERS = {
     "Content-Type": "application/json",
