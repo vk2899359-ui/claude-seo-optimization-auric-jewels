@@ -39,17 +39,38 @@ HEADERS = {
     "Authorization": f"Bearer {AUTH_TOKEN}",
 }
 
+TIMEOUT = 120        # seconds per request
+BATCH_SIZE = 25      # products per collectionAddProducts call
+MAX_RETRIES = 4      # retry attempts on timeout/5xx
+PROGRESS_FILE = "assign-progress.json"  # tracks completed collections for resume
+
 
 def gql(query: str, variables: dict = None) -> dict:
     payload = {"query": query}
     if variables:
         payload["variables"] = variables
-    resp = requests.post(GRAPHQL_URL, headers=HEADERS, json=payload, timeout=30)
-    resp.raise_for_status()
-    data = resp.json()
-    if "errors" in data:
-        raise RuntimeError(f"GraphQL errors: {json.dumps(data['errors'], indent=2)}")
-    return data["data"]
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            resp = requests.post(GRAPHQL_URL, headers=HEADERS, json=payload, timeout=TIMEOUT)
+            resp.raise_for_status()
+            data = resp.json()
+            if "errors" in data:
+                raise RuntimeError(f"GraphQL errors: {json.dumps(data['errors'], indent=2)}")
+            return data["data"]
+        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
+            if attempt == MAX_RETRIES:
+                raise
+            wait = 2 ** attempt
+            print(f"    [retry {attempt}/{MAX_RETRIES}] {type(e).__name__} — waiting {wait}s...", file=sys.stderr)
+            time.sleep(wait)
+        except requests.exceptions.HTTPError as e:
+            if e.response is not None and e.response.status_code < 500:
+                raise
+            if attempt == MAX_RETRIES:
+                raise
+            wait = 2 ** attempt
+            print(f"    [retry {attempt}/{MAX_RETRIES}] HTTP {e.response.status_code} — waiting {wait}s...", file=sys.stderr)
+            time.sleep(wait)
 
 
 # ---------------------------------------------------------------------------
@@ -241,20 +262,23 @@ mutation CollectionAddProducts($collectionId: ID!, $productIds: [ID!]!) {
 }
 """
 
-BATCH_SIZE = 100
-
 
 def assign_products_to_collection(collection_id: str, product_ids: list[str]) -> int:
+    """Assign products in small batches with retry; returns total assigned count."""
     assigned = 0
+    total_batches = (len(product_ids) + BATCH_SIZE - 1) // BATCH_SIZE
     for i in range(0, len(product_ids), BATCH_SIZE):
         batch = product_ids[i : i + BATCH_SIZE]
+        batch_num = i // BATCH_SIZE + 1
+        print(f"    batch {batch_num}/{total_batches} ({len(batch)} products)...", end=" ", flush=True)
         data = gql(ADD_PRODUCTS_MUTATION, {"collectionId": collection_id, "productIds": batch})
         errors = data["collectionAddProducts"]["errors"]
         if errors:
-            print(f"    [WARN] batch {i//BATCH_SIZE + 1} errors: {errors}", file=sys.stderr)
+            print(f"WARN: {errors}", file=sys.stderr)
         else:
             assigned += len(batch)
-        time.sleep(0.1)
+            print("ok")
+        time.sleep(0.2)
     return assigned
 
 
@@ -281,6 +305,14 @@ def main():
     coll_name_map = {c["id"]: c["name"] for c in collections}
 
     print("\nStep 4: Assigning products to collections...")
+
+    # Load saved progress so re-runs skip already-completed collections
+    progress: dict[str, int] = {}
+    if os.path.exists(PROGRESS_FILE):
+        with open(PROGRESS_FILE) as f:
+            progress = json.load(f)
+        print(f"  Resuming — {len(progress)} collection(s) already done (delete {PROGRESS_FILE} to restart)")
+
     summary = []
     skipped = ["flash sale", "new arrivals"]
     for cid, pids in coll_product_map.items():
@@ -293,8 +325,15 @@ def main():
             print(f"  {cname}: 0 products matched — skipping")
             summary.append((cname, 0, "no match"))
             continue
+        if cid in progress:
+            print(f"  {cname}: already done ({progress[cid]} products) — skipping")
+            summary.append((cname, progress[cid], "done"))
+            continue
         print(f"  {cname}: assigning {len(pids)} product(s)...")
         assigned = assign_products_to_collection(cid, pids)
+        progress[cid] = assigned
+        with open(PROGRESS_FILE, "w") as f:
+            json.dump(progress, f)
         summary.append((cname, assigned, "done"))
 
     print("\n" + "=" * 55)
