@@ -114,6 +114,12 @@ query GetProducts($after: String) {
         id
         name
         description
+        rating
+        pricing {
+          priceRange {
+            start { gross { amount } }
+          }
+        }
         category { id name }
       }
     }
@@ -136,23 +142,21 @@ def fetch_all_products() -> list[dict]:
     return products
 
 
-TOP_PRODUCTS_QUERY = """
-query TopProducts($sortField: ProductOrderField!) {
-  products(
-    first: 100
-    channel: "%s"
-    sortBy: { field: $sortField, direction: DESC }
-  ) {
-    edges { node { id name } }
-  }
-}
-""" % CHANNEL
+def product_price(p: dict) -> float:
+    try:
+        return p["pricing"]["priceRange"]["start"]["gross"]["amount"]
+    except (TypeError, KeyError):
+        return 0.0
 
 
-def fetch_top_product_ids(sort_field: str) -> list[str]:
-    """Return IDs of the top 100 products sorted by sort_field DESC."""
-    data = gql(TOP_PRODUCTS_QUERY, {"sortField": sort_field})
-    return [edge["node"]["id"] for edge in data["products"]["edges"]]
+def product_rating(p: dict) -> float:
+    return p.get("rating") or 0.0
+
+
+def top_ids_by(products: list[dict], key_fn, limit: int = 100) -> list[str]:
+    """Return IDs of the top `limit` products sorted by key_fn descending."""
+    ranked = sorted(products, key=key_fn, reverse=True)
+    return [p["id"] for p in ranked[:limit]]
 
 
 # ---------------------------------------------------------------------------
@@ -322,13 +326,11 @@ def main():
     products = fetch_all_products()
     print(f"  Found {len(products)} product(s)")
 
-    print("\nStep 2b: Fetching top 100 products by price (for Featured Products)...")
-    featured_ids = fetch_top_product_ids("PRICE")
-    print(f"  Got {len(featured_ids)} product IDs")
-
-    print("\nStep 2c: Fetching top 100 products by rating (for Best Seller)...")
-    bestseller_ids = fetch_top_product_ids("RATING")
-    print(f"  Got {len(bestseller_ids)} product IDs")
+    print("\nStep 2b: Ranking top 100 by price (Featured Products) and rating (Best Seller)...")
+    featured_ids = top_ids_by(products, product_price)
+    bestseller_ids = top_ids_by(products, product_rating)
+    print(f"  Featured Products: top {len(featured_ids)} by price")
+    print(f"  Best Seller:       top {len(bestseller_ids)} by rating")
 
     print("\nStep 3: Applying mapping rules...")
     coll_product_map = build_collection_product_map(collections, products, featured_ids, bestseller_ids)
