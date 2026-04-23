@@ -8,20 +8,20 @@ Actual store collections (discovered from live API):
   Top Products, Trendy Styles, Valentine Collection
 
 Mapping rules (category matching is partial/case-insensitive):
-  Necklaces           → category contains necklace / mangalsutra / chain / pendant
-  Earrings            → category contains earring
-  Bracelets           → category contains bracelet / bangle
-  Solitaire Collection→ "solitaire" in name/description
-  For Her             → category contains necklace / earring / bangle / mangalsutra / bracelet
-  For Him             → category contains ring / bracelet / chain; or "men"/"gents" in text
-  Anniversary Collection → "diamond" in text + ring/necklace/pendant category
-  Valentine Collection→ heart/love/valentine/couple/solitaire in text
-  Featured Products   → "diamond" in name/description
-  Best Seller         → "gold" in name/description
-  Top Products        → category contains necklace / ring / earring / bangle / bracelet
-  Trendy Styles       → trendy/modern/fashion/lightweight keywords OR earring/bracelet category
-  Flash Sale          → skipped (needs price/sale logic)
-  New Arrivals        → skipped (needs date-based filtering)
+  Necklaces            → category contains necklace / mangalsutra / chain / pendant
+  Earrings             → category contains earring
+  Bracelets            → category contains bracelet / bangle
+  Solitaire Collection → "solitaire" in name/description
+  For Her              → category contains necklace / earring / bangle / mangalsutra / bracelet
+  For Him              → category contains ring / bracelet / chain; or "men"/"gents" in text
+  Anniversary Collection → "anniversary" in name/description
+  Valentine Collection → "valentine" or "heart" in product name only
+  Featured Products    → top 100 highest-priced products (by price DESC)
+  Best Seller          → top 100 highest-rated products (by rating DESC)
+  Top Products         → category contains necklace / ring / earring / bangle / bracelet
+  Trendy Styles        → trendy/modern/fashion/lightweight keywords OR earring/bracelet category
+  Flash Sale           → skipped (needs price/sale logic)
+  New Arrivals         → skipped (needs date-based filtering)
 """
 
 import os
@@ -136,6 +136,25 @@ def fetch_all_products() -> list[dict]:
     return products
 
 
+TOP_PRODUCTS_QUERY = """
+query TopProducts($sortField: ProductOrderField!) {
+  products(
+    first: 100
+    channel: "%s"
+    sortBy: { field: $sortField, direction: DESC }
+  ) {
+    edges { node { id name } }
+  }
+}
+""" % CHANNEL
+
+
+def fetch_top_product_ids(sort_field: str) -> list[str]:
+    """Return IDs of the top 100 products sorted by sort_field DESC."""
+    data = gql(TOP_PRODUCTS_QUERY, {"sortField": sort_field})
+    return [edge["node"]["id"] for edge in data["products"]["edges"]]
+
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -171,7 +190,10 @@ def text_has(text: str, *keywords: str) -> bool:
 # ---------------------------------------------------------------------------
 
 def build_collection_product_map(
-    collections: list[dict], products: list[dict]
+    collections: list[dict],
+    products: list[dict],
+    featured_ids: list[str],
+    bestseller_ids: list[str],
 ) -> dict[str, list[str]]:
     # lowercase name → id
     coll_by_name: dict[str, str] = {c["name"].lower(): c["id"] for c in collections}
@@ -188,8 +210,17 @@ def build_collection_product_map(
         if cid and product_id not in result[cid]:
             result[cid].append(product_id)
 
+    # Featured Products — top 100 by price (pre-fetched)
+    for pid in featured_ids:
+        add("featured products", pid)
+
+    # Best Seller — top 100 by rating (pre-fetched)
+    for pid in bestseller_ids:
+        add("best seller", pid)
+
     for p in products:
         pid = p["id"]
+        name_lower = p["name"].lower()
         text = product_text(p)
 
         # Necklaces — necklace / mangalsutra / chain / pendant categories
@@ -216,21 +247,13 @@ def build_collection_product_map(
         if cat_has(p, "ring", "bracelet", "chain") or text_has(text, " men", "gents", "for him", "mens"):
             add("for him", pid)
 
-        # Anniversary Collection — diamond jewelry in premium categories
-        if text_has(text, "diamond") and cat_has(p, "ring", "necklace", "pendant", "earring"):
+        # Anniversary Collection — "anniversary" in name or description
+        if text_has(text, "anniversary"):
             add("anniversary collection", pid)
 
-        # Valentine Collection — romantic / heart / love themes or solitaire
-        if text_has(text, "heart", "love", "valentine", "couple", "solitaire", "romantic"):
+        # Valentine Collection — "valentine" or "heart" in product name only
+        if text_has(name_lower, "valentine", "heart"):
             add("valentine collection", pid)
-
-        # Featured Products — any diamond jewelry
-        if text_has(text, "diamond"):
-            add("featured products", pid)
-
-        # Best Seller — gold jewelry (most popular material)
-        if text_has(text, "gold"):
-            add("best seller", pid)
 
         # Top Products — main jewelry categories
         if cat_has(p, "necklace", "ring", "earring", "bangle", "bracelet", "pendant", "mangalsutra"):
@@ -299,8 +322,16 @@ def main():
     products = fetch_all_products()
     print(f"  Found {len(products)} product(s)")
 
+    print("\nStep 2b: Fetching top 100 products by price (for Featured Products)...")
+    featured_ids = fetch_top_product_ids("PRICE")
+    print(f"  Got {len(featured_ids)} product IDs")
+
+    print("\nStep 2c: Fetching top 100 products by rating (for Best Seller)...")
+    bestseller_ids = fetch_top_product_ids("RATING")
+    print(f"  Got {len(bestseller_ids)} product IDs")
+
     print("\nStep 3: Applying mapping rules...")
-    coll_product_map = build_collection_product_map(collections, products)
+    coll_product_map = build_collection_product_map(collections, products, featured_ids, bestseller_ids)
 
     coll_name_map = {c["id"]: c["name"] for c in collections}
 
