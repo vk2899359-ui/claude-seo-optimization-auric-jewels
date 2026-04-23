@@ -2,14 +2,26 @@
 """
 Assign products to collections on auricjewels.com via Saleor GraphQL API.
 
-Mapping rules:
-- Bridal Jewellery     → Necklaces, Rings, Bangles, Earrings categories
-- Diamond Rings        → Rings category + "diamond" in name/description
-- Gold Necklaces       → Necklaces category + "gold" in name
-- Mangalsutra          → "mangalsutra" in name
-- Gold Bangles         → all Bangles category products
-- Diamond Earrings     → Earrings category + "diamond" in name/description
-- Solitaire Rings      → "solitaire" in name
+Actual store collections (discovered from live API):
+  Anniversary Collection, Best Seller, Bracelets, Earrings, Featured Products,
+  Flash Sale, For Her, For Him, Necklaces, New Arrivals, Solitaire Collection,
+  Top Products, Trendy Styles, Valentine Collection
+
+Mapping rules (category matching is partial/case-insensitive):
+  Necklaces           → category contains necklace / mangalsutra / chain / pendant
+  Earrings            → category contains earring
+  Bracelets           → category contains bracelet / bangle
+  Solitaire Collection→ "solitaire" in name/description
+  For Her             → category contains necklace / earring / bangle / mangalsutra / bracelet
+  For Him             → category contains ring / bracelet / chain; or "men"/"gents" in text
+  Anniversary Collection → "diamond" in text + ring/necklace/pendant category
+  Valentine Collection→ heart/love/valentine/couple/solitaire in text
+  Featured Products   → "diamond" in name/description
+  Best Seller         → "gold" in name/description
+  Top Products        → category contains necklace / ring / earring / bangle / bracelet
+  Trendy Styles       → trendy/modern/fashion/lightweight keywords OR earring/bracelet category
+  Flash Sale          → skipped (needs price/sale logic)
+  New Arrivals        → skipped (needs date-based filtering)
 """
 
 import os
@@ -48,12 +60,7 @@ COLLECTIONS_QUERY = """
 query GetCollections($after: String) {
   collections(first: 100, after: $after, channel: "%s") {
     pageInfo { hasNextPage endCursor }
-    edges {
-      node {
-        id
-        name
-      }
-    }
+    edges { node { id name } }
   }
 }
 """ % CHANNEL
@@ -74,7 +81,7 @@ def fetch_all_collections() -> list[dict]:
 
 
 # ---------------------------------------------------------------------------
-# Step 2: Fetch all products with category and descriptions
+# Step 2: Fetch all products with category and description
 # ---------------------------------------------------------------------------
 
 PRODUCTS_QUERY = """
@@ -86,10 +93,7 @@ query GetProducts($after: String) {
         id
         name
         description
-        category {
-          id
-          name
-        }
+        category { id name }
       }
     }
   }
@@ -112,18 +116,14 @@ def fetch_all_products() -> list[dict]:
 
 
 # ---------------------------------------------------------------------------
-# Step 3: Apply mapping rules
+# Helpers
 # ---------------------------------------------------------------------------
 
-BRIDAL_CATEGORIES = {"necklaces", "rings", "bangles", "earrings"}
-
-
 def product_text(p: dict) -> str:
-    """Return a lower-cased combined text of name + description for keyword matching."""
+    """Lower-cased name + description text for keyword matching."""
     desc = ""
     if p.get("description"):
         try:
-            # Saleor stores description as Editorjs JSON
             desc_data = json.loads(p["description"])
             for block in desc_data.get("blocks", []):
                 desc += " " + block.get("data", {}).get("text", "")
@@ -132,58 +132,98 @@ def product_text(p: dict) -> str:
     return (p["name"] + " " + desc).lower()
 
 
-def category_name(p: dict) -> str:
+def cat(p: dict) -> str:
     return (p.get("category") or {}).get("name", "").lower()
 
+
+def cat_has(p: dict, *keywords: str) -> bool:
+    c = cat(p)
+    return any(k in c for k in keywords)
+
+
+def text_has(text: str, *keywords: str) -> bool:
+    return any(k in text for k in keywords)
+
+
+# ---------------------------------------------------------------------------
+# Step 3: Build mapping  {collection_id: [product_id, ...]}
+# ---------------------------------------------------------------------------
 
 def build_collection_product_map(
     collections: list[dict], products: list[dict]
 ) -> dict[str, list[str]]:
-    """
-    Returns {collection_id: [product_id, ...]} based on mapping rules.
-    """
-    # Build collection name → id lookup (lower-cased for matching)
+    # lowercase name → id
     coll_by_name: dict[str, str] = {c["name"].lower(): c["id"] for c in collections}
-
     result: dict[str, list[str]] = {c["id"]: [] for c in collections}
+
+    # Print discovered categories for transparency
+    unique_cats = sorted({cat(p) for p in products if cat(p)})
+    print(f"  Discovered {len(unique_cats)} product categories:")
+    for uc in unique_cats:
+        print(f"    • {uc}")
 
     def add(collection_name_lower: str, product_id: str):
         cid = coll_by_name.get(collection_name_lower)
-        if cid:
+        if cid and product_id not in result[cid]:
             result[cid].append(product_id)
 
     for p in products:
         pid = p["id"]
-        cat = category_name(p)
         text = product_text(p)
 
-        # Bridal Jewellery — products from Necklaces, Rings, Bangles, Earrings
-        if cat in BRIDAL_CATEGORIES:
-            add("bridal jewellery", pid)
+        # Necklaces — necklace / mangalsutra / chain / pendant categories
+        if cat_has(p, "necklace", "mangalsutra", "chain", "pendant"):
+            add("necklaces", pid)
 
-        # Diamond Rings — Rings category + "diamond" keyword
-        if cat == "rings" and "diamond" in text:
-            add("diamond rings", pid)
+        # Earrings — earring category
+        if cat_has(p, "earring"):
+            add("earrings", pid)
 
-        # Gold Necklaces — Necklaces category + "gold" keyword
-        if cat == "necklaces" and "gold" in text:
-            add("gold necklaces", pid)
+        # Bracelets — bracelet / bangle category
+        if cat_has(p, "bracelet", "bangle"):
+            add("bracelets", pid)
 
-        # Mangalsutra — "mangalsutra" in name/description
-        if "mangalsutra" in text:
-            add("mangalsutra", pid)
+        # Solitaire Collection — "solitaire" in name/description
+        if text_has(text, "solitaire"):
+            add("solitaire collection", pid)
 
-        # Gold Bangles — all Bangles category
-        if cat == "bangles":
-            add("gold bangles", pid)
+        # For Her — feminine jewelry categories
+        if cat_has(p, "necklace", "earring", "bangle", "mangalsutra", "bracelet", "pendant"):
+            add("for her", pid)
 
-        # Diamond Earrings — Earrings category + "diamond" keyword
-        if cat == "earrings" and "diamond" in text:
-            add("diamond earrings", pid)
+        # For Him — rings, chains, bracelets, or explicitly for men
+        if cat_has(p, "ring", "bracelet", "chain") or text_has(text, " men", "gents", "for him", "mens"):
+            add("for him", pid)
 
-        # Solitaire Rings — "solitaire" in name/description
-        if "solitaire" in text:
-            add("solitaire rings", pid)
+        # Anniversary Collection — diamond jewelry in premium categories
+        if text_has(text, "diamond") and cat_has(p, "ring", "necklace", "pendant", "earring"):
+            add("anniversary collection", pid)
+
+        # Valentine Collection — romantic / heart / love themes or solitaire
+        if text_has(text, "heart", "love", "valentine", "couple", "solitaire", "romantic"):
+            add("valentine collection", pid)
+
+        # Featured Products — any diamond jewelry
+        if text_has(text, "diamond"):
+            add("featured products", pid)
+
+        # Best Seller — gold jewelry (most popular material)
+        if text_has(text, "gold"):
+            add("best seller", pid)
+
+        # Top Products — main jewelry categories
+        if cat_has(p, "necklace", "ring", "earring", "bangle", "bracelet", "pendant", "mangalsutra"):
+            add("top products", pid)
+
+        # Trendy Styles — fashion/modern keywords OR earrings/bracelets (fast-fashion items)
+        if text_has(text, "trendy", "modern", "contemporary", "fashion", "stylish",
+                    "lightweight", "daily wear", "casual"):
+            add("trendy styles", pid)
+        elif cat_has(p, "earring", "bracelet", "bangle"):
+            add("trendy styles", pid)
+
+        # Flash Sale — skipped (needs price/sale logic)
+        # New Arrivals — skipped (needs date-based filtering)
 
     return result
 
@@ -195,34 +235,26 @@ def build_collection_product_map(
 ADD_PRODUCTS_MUTATION = """
 mutation CollectionAddProducts($collectionId: ID!, $productIds: [ID!]!) {
   collectionAddProducts(collectionId: $collectionId, products: $productIds) {
-    collection {
-      id
-      name
-    }
-    errors {
-      field
-      message
-      code
-    }
+    collection { id name }
+    errors { field message code }
   }
 }
 """
 
-BATCH_SIZE = 100  # Saleor handles up to 100 IDs per mutation call
+BATCH_SIZE = 100
 
 
 def assign_products_to_collection(collection_id: str, product_ids: list[str]) -> int:
-    """Assign products in batches; returns total assigned count."""
     assigned = 0
     for i in range(0, len(product_ids), BATCH_SIZE):
         batch = product_ids[i : i + BATCH_SIZE]
         data = gql(ADD_PRODUCTS_MUTATION, {"collectionId": collection_id, "productIds": batch})
         errors = data["collectionAddProducts"]["errors"]
         if errors:
-            print(f"  [WARN] Errors assigning batch: {errors}", file=sys.stderr)
+            print(f"    [WARN] batch {i//BATCH_SIZE + 1} errors: {errors}", file=sys.stderr)
         else:
             assigned += len(batch)
-        time.sleep(0.1)  # gentle rate limiting
+        time.sleep(0.1)
     return assigned
 
 
@@ -246,31 +278,36 @@ def main():
     print("\nStep 3: Applying mapping rules...")
     coll_product_map = build_collection_product_map(collections, products)
 
-    # Build id → name for reporting
     coll_name_map = {c["id"]: c["name"] for c in collections}
 
-    print("\nStep 4: Assigning products to collections...\n")
+    print("\nStep 4: Assigning products to collections...")
     summary = []
+    skipped = ["flash sale", "new arrivals"]
     for cid, pids in coll_product_map.items():
         cname = coll_name_map[cid]
+        if cname.lower() in skipped:
+            print(f"  {cname}: skipped (needs price/date logic)")
+            summary.append((cname, 0, "skipped"))
+            continue
         if not pids:
             print(f"  {cname}: 0 products matched — skipping")
-            summary.append((cname, 0))
+            summary.append((cname, 0, "no match"))
             continue
         print(f"  {cname}: assigning {len(pids)} product(s)...")
         assigned = assign_products_to_collection(cid, pids)
-        summary.append((cname, assigned))
+        summary.append((cname, assigned, "done"))
 
-    print("\n" + "=" * 50)
+    print("\n" + "=" * 55)
     print("Step 5: Summary")
-    print("=" * 50)
+    print("=" * 55)
     total = 0
-    for cname, count in sorted(summary, key=lambda x: -x[1]):
-        print(f"  {cname:<25} {count:>4} product(s) assigned")
+    for cname, count, status in sorted(summary, key=lambda x: -x[1]):
+        flag = "" if status == "done" else f"  [{status}]"
+        print(f"  {cname:<28} {count:>5} product(s){flag}")
         total += count
-    print("-" * 50)
-    print(f"  {'TOTAL':<25} {total:>4} assignment(s)")
-    print("=" * 50)
+    print("-" * 55)
+    print(f"  {'TOTAL':<28} {total:>5} assignment(s)")
+    print("=" * 55)
 
 
 if __name__ == "__main__":
