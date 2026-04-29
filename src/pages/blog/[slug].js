@@ -7,13 +7,13 @@ const SITE_URL = 'https://www.auricjewels.com';
 const WA_URL = 'https://wa.me/919012495941';
 
 const blogMeta = {
-  'blog-01-best-diamond-jewellery-showroom-gurgaon': { title: 'Best Diamond Jewellery Showroom in Gurgaon', description: 'Why families across Delhi NCR trust Auric Jewels for certified diamond jewellery, BIS hallmarked gold, and solitaire collections.', category: 'Diamond Jewellery', readTime: '6 min read' },
-  'blog-gold-jewellery-investment-2026-gurgaon': { title: 'Gold Jewellery Investment Guide 2026', description: 'Is gold jewellery a good investment in 2026? Expert guide on gold purity, resale value, and smart buying strategies.', category: 'Gold Investment', readTime: '7 min read' },
-  'blog-jewellery-trends-india-2026': { title: 'Jewellery Trends India 2026', description: 'Top jewellery trends in India for 2026 — from layered necklaces to solitaire rings.', category: 'Jewellery Trends', readTime: '5 min read' },
-  'blog-lab-grown-vs-natural-diamonds-comparison-india': { title: 'Lab Grown vs Natural Diamonds', description: 'Complete comparison for Indian buyers — price, quality, resale value, and which to choose.', category: 'Diamond Guide', readTime: '8 min read' },
-  'blog-layered-necklace-styling-guide-indian-women': { title: 'Layered Necklace Styling Guide', description: 'How to style layered necklaces for Indian women — gold, diamond, and platinum ideas for every occasion.', category: 'Styling Guide', readTime: '5 min read' },
-  'blog-lightweight-gold-jewellery-working-women': { title: 'Lightweight Gold Jewellery for Working Women', description: 'Best lightweight gold jewellery for working women in 2026 — comfortable, elegant everyday pieces.', category: 'Everyday Jewellery', readTime: '5 min read' },
-  'blog-platinum-jewellery-men-gurgaon': { title: 'Platinum Jewellery for Men in Gurgaon', description: 'Premium platinum jewellery for men at Auric Jewels Gurgaon — rings, bracelets, chains in certified platinum.', category: "Men's Jewellery", readTime: '6 min read' },
+  '01-best-diamond-jewellery-showroom-gurgaon': { title: 'Best Diamond Jewellery Showroom in Gurgaon', description: 'Why families across Delhi NCR trust Auric Jewels for certified diamond jewellery, BIS hallmarked gold, and solitaire collections.', category: 'Diamond Jewellery', readTime: '6 min read' },
+  'gold-jewellery-investment-2026-gurgaon': { title: 'Gold Jewellery Investment Guide 2026', description: 'Is gold jewellery a good investment in 2026? Expert guide on gold purity, resale value, and smart buying strategies.', category: 'Gold Investment', readTime: '7 min read' },
+  'jewellery-trends-india-2026': { title: 'Jewellery Trends India 2026', description: 'Top jewellery trends in India for 2026 — from layered necklaces to solitaire rings.', category: 'Jewellery Trends', readTime: '5 min read' },
+  'lab-grown-vs-natural-diamonds-comparison-india': { title: 'Lab Grown vs Natural Diamonds', description: 'Complete comparison for Indian buyers — price, quality, resale value, and which to choose.', category: 'Diamond Guide', readTime: '8 min read' },
+  'layered-necklace-styling-guide-indian-women': { title: 'Layered Necklace Styling Guide', description: 'How to style layered necklaces for Indian women — gold, diamond, and platinum ideas for every occasion.', category: 'Styling Guide', readTime: '5 min read' },
+  'lightweight-gold-jewellery-working-women': { title: 'Lightweight Gold Jewellery for Working Women', description: 'Best lightweight gold jewellery for working women in 2026 — comfortable, elegant everyday pieces.', category: 'Everyday Jewellery', readTime: '5 min read' },
+  'platinum-jewellery-men-gurgaon': { title: 'Platinum Jewellery for Men in Gurgaon', description: 'Premium platinum jewellery for men at Auric Jewels Gurgaon — rings, bracelets, chains in certified platinum.', category: "Men's Jewellery", readTime: '6 min read' },
 };
 
 // ─── SERVER-SIDE HTML PARSER ──────────────────────────────────────────────────
@@ -866,7 +866,7 @@ export async function getStaticPaths() {
   const contentDir = path.join(process.cwd(), 'content');
   const files = fs.readdirSync(contentDir).filter(f => f.startsWith('blog-') && f.endsWith('.html'));
   return {
-    paths: files.map(f => ({ params: { slug: f.replace('.html', '') } })),
+    paths: files.map(f => ({ params: { slug: f.replace(/^blog-/, '').replace('.html', '') } })),
     fallback: false,
   };
 }
@@ -874,7 +874,10 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params }) {
   const { slug } = params;
   const contentDir = path.join(process.cwd(), 'content');
-  const rawHtml = fs.readFileSync(path.join(contentDir, `${slug}.html`), 'utf-8');
+  const primary = path.join(contentDir, `${slug}.html`);
+  const fallback = path.join(contentDir, `blog-${slug}.html`);
+  const filePath = fs.existsSync(primary) ? primary : fallback;
+  const rawHtml = fs.readFileSync(filePath, 'utf-8');
   const nodes = parseBlocks(rawHtml);
 
   const meta = blogMeta[slug] || {
