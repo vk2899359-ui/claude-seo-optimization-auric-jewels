@@ -3,7 +3,7 @@ import urllib.request
 import urllib.error
 
 ENDPOINT = "https://auric.thecodemesh.online/graphql/"
-TOKEN = "rlcLjvXb3wMMHMf1PBsePS8UdTmOBb"
+TOKEN = "EXjfazrP5PWBz5LE0TyckHNvQ5M7Q1"
 PAGE_TYPE_ID = "UGFnZVR5cGU6Ng=="
 CHANNEL = "franchise1"
 
