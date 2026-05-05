@@ -1,6 +1,53 @@
-// Auric Jewels — All 14 Blog Articles Data
+// Auric Jewels — All 15 Blog Articles Data (updated 2026-05-05)
 // This file is loaded by auto-publish-full.html
 const ARTICLES = [
+
+// ══════════════════════════════════════════════════════════
+// ARTICLE 0 — NEW (2026-05-05 session)
+// Trending keyword: polki jewellery set for brides 2026
+// ══════════════════════════════════════════════════════════
+{
+title: "Polki Jewellery Sets for Brides 2026 — Where Ancient Craft Meets Modern Royalty",
+slug: "polki-jewellery-set-brides-2026",
+metaTitle: "Polki Jewellery Sets for Brides 2026 | Luxury Bridal Jewellery | Auric Jewels Gurgaon",
+metaDescription: "Discover exquisite Polki jewellery sets for brides in 2026 at Auric Jewels, Gurugram. Jadau craftsmanship, uncut diamonds & pastel meenakari for the modern maharani.",
+content: `<article><h1>Polki Jewellery Sets for Brides 2026 — Where Ancient Craft Meets Modern Royalty</h1>
+<p>There are jewellery trends, and then there are jewellery traditions. In 2026, as India’s most discerning brides prepare for ceremonies that blend centuries of culture with contemporary elegance, one category stands apart from every passing fashion: Polki jewellery. Rooted in the Mughal courts of a bygone era yet commanding the most coveted places in today’s bridal trousseaux, a <strong>Polki jewellery set for brides</strong> is not merely an accessory — it is an heirloom, a statement, and a legacy.</p>
+<p>At <a href="https://www.auricjewels.com">Auric Jewels</a> in Gurugram, we have observed something remarkable this wedding season: the demand for authentic Polki jewellery sets among 2026 brides has surpassed every previous year. Today’s bride understands that uncut diamonds — with their raw, earthy luminosity — carry a depth of character that no machine-cut stone can replicate.</p>
+<h2>What Is Polki Jewellery? The Craft Behind the Crown</h2>
+<p>Polki is the art of setting uncut, unpolished diamonds — as close to their natural state as possible — in 22-karat gold frameworks. Unlike modern brilliant-cut diamonds engineered for maximum light refraction, Polki diamonds are celebrated for their soul: the way they absorb candlelight, catch the warmth of marigold garlands, and glow with a muted, ancient luminescence that photographs cannot fully capture.</p>
+<p>The technique originates from Mughal India, refined over centuries by master craftsmen known as <em>Jadau karigars</em>. Each piece requires weeks — sometimes months — of skilled handwork: setting each uncut diamond individually, layering with meenakari enamel on the reverse, and constructing frameworks of hollow gold that are simultaneously featherlight and architecturally grand.</p>
+<h2>Why 2026 Is the Year of the Polki Bridal Set</h2>
+<p>The Indian wedding jewellery market saw value demand rise 47% year-on-year in Q1 2026, driven by higher-income buyers favouring heritage and investment-grade pieces. With 24-karat gold trading above ₹14,900 per gram in May 2026, a Polki jewellery set represents both emotional resonance and financial wisdom. India’s most aspirational brides are turning away from the generic and toward the irreplaceable — and Polki is that irreplaceable thing.</p>
+<h2>Polki Bridal Jewellery Trends Defining 2026</h2>
+<h3>Pastel Meenakari: The New Bridal Palette</h3>
+<p>In 2026, the enamel work on Polki sets has shifted from the traditional red-and-green palette toward powder blue, blush rose, and sage green — harmonising beautifully with the pastel bridal lehengas that dominate this season’s couture runways. The result is a jewellery set that is complete in every dimension, even the one that faces inward.</p>
+<h3>Choker-Forward Layered Sets</h3>
+<p>Statement Polki chokers paired with a longer <em>haar</em> and cascading maang tikka have replaced the traditional full-parure approach. This layered composition allows individual pieces to be worn for years post-wedding — at formal events, family celebrations, and cultural gatherings — rather than being confined to a single occasion.</p>
+<h3>Polki with Coloured Gemstones</h3>
+<p>Emeralds, rubies, and spinels are being incorporated into Polki settings with renewed confidence this season. A Polki and emerald necklace evokes the finest pieces of the royal Rajput courts, while ruby-studded Polki earrings command attention at every function from mehendi to the reception. At <a href="https://www.auricjewels.com/categories/necklaces">Auric Jewels</a>, each gemstone is sourced for colour saturation and provenance.</p>
+<h3>Singular Polki: The Connoisseur’s Choice</h3>
+<p>A growing number of Auric Jewels’ Gurugram clientele selects singular, superbly crafted Polki pieces — a pair of drop earrings, a slim bangle, or a delicate maang tikka — that bring the full richness of this ancient craft to a contemporary, restrained aesthetic. One masterpiece, worn with complete conviction.</p>
+<h2>Why a Polki Jewellery Set Is Your Most Intelligent Bridal Investment</h2>
+<p>A Polki set holds value across multiple dimensions: the 22-karat gold framework appreciates with bullion markets; authentic uncut diamonds carry intrinsic, difficult-to-replicate value; the embedded Jadau craftsmanship is irreplaceable; and heritage pieces appreciate culturally across generations. This is not jewellery you sell. It is jewellery you pass down.</p>
+<h2>Styling Your Polki Set Across Every Wedding Function</h2>
+<p><strong>Haldi and Mehendi:</strong> Delicate Polki bangles and stud earrings with colourful meenakari — festive without overwhelming.</p>
+<p><strong>Sangeet:</strong> A Polki maang tikka paired with chandelier earrings. Let the light and the music do the rest.</p>
+<p><strong>Wedding Ceremony:</strong> The full expression — choker, layered haar, jhumkas, maang tikka, <em>passa</em>, and nath. This is the occasion the set was created for.</p>
+<p><strong>Reception:</strong> A curated selection. The statement necklace with simple studs, or the chandelier earrings with a minimal neckpiece. The sophistication is in the restraint.</p>
+<h2>Selecting Your Polki Bridal Set at Auric Jewels, Gurugram</h2>
+<p>At our Gurugram atelier, our bridal consultants guide every client through the occasion hierarchy, the lehenga palette, and what we call the legacy test: would you be proud to present this piece to your daughter? That is the true measure of a Polki purchase — and the standard every piece in our collection is held to.</p>
+<h2>Frequently Asked Questions</h2>
+<h3>What is the difference between Polki and Kundan jewellery?</h3>
+<p>Polki uses uncut, natural diamonds set in gold. Kundan uses glass or cut stones set in a gold foil base. Both employ the Jadau technique, but Polki carries the additional intrinsic value of genuine diamonds, making it a stronger long-term investment.</p>
+<h3>How heavy is a Polki jewellery set?</h3>
+<p>Despite their visual grandeur, well-crafted Polki sets are surprisingly comfortable. The hollow-gold framework construction ensures that even elaborate bridal sets remain wearable across a full wedding day.</p>
+<h3>What is the price range for a Polki jewellery set at Auric Jewels?</h3>
+<p>Our Polki bridal collection begins at ₹80,000 for individual pieces and extends to ₹5,00,000 and above for complete bridal sets. Pricing reflects gold weight, diamond quality, karigar hours, and Jadau complexity.</p>
+<h2>Visit Auric Jewels — Gurugram’s Destination for Polki Bridal Jewellery 2026</h2>
+<p>Our Polki collection for 2026 brides is available for private viewing by appointment. Visit our Gurugram showroom (open 10 AM to 8 PM, seven days a week) or explore the full collection at <a href="https://www.auricjewels.com">www.auricjewels.com</a>. For bridal appointments, call <a href="tel:+919012495941">+91-9012495941</a>. Because some decisions are not just for the wedding day. They are for a lifetime.</p></article>`
+},
+
 
 // ══════════════════════════════════════════════════════════
 // ARTICLE 1
