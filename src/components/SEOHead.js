@@ -49,12 +49,13 @@ export default function SEOHead({
       <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large" />
 
       {/* Structured Data (JSON-LD) */}
-      {structuredData && (
+      {structuredData && (Array.isArray(structuredData) ? structuredData : [structuredData]).map((schema, i) => (
         <script
+          key={i}
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
         />
-      )}
+      ))}
     </Head>
   );
 }

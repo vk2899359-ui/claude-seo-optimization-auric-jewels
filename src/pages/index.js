@@ -20,6 +20,53 @@ const structuredData = {
   openingHours: 'Mo-Su 10:00-20:00',
 };
 
+const faqStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Are your diamonds IGI certified?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes, all diamonds at Auric Jewels are IGI certified with full grading reports available.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What are the making charges at Auric Jewels Gurgaon?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Our making charges are transparent and fixed — disclosed upfront with no hidden costs.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is the gold BIS hallmarked at Auric Jewels?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes, all gold jewellery is BIS hallmarked in 18K and 22K purity.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Do you offer private jewellery consultations?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes, private appointments available. Book via WhatsApp +91 79060 81795.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Where is Auric Jewels located?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Sector 45, Gurugram, Haryana — near South City 1.',
+      },
+    },
+  ],
+};
+
 const categories = [
   { name: 'Rings', slug: 'rings', icon: '💍' },
   { name: 'Earrings', slug: 'earrings', icon: '✦' },
@@ -91,7 +138,7 @@ export default function HomePage() {
         title={homepageSEO.title}
         description={homepageSEO.description}
         canonical="/"
-        structuredData={structuredData}
+        structuredData={[structuredData, faqStructuredData]}
       />
 
       {/* ═══════════════════════════════════════════════════
