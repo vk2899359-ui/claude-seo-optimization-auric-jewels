@@ -26,42 +26,50 @@ const faqStructuredData = {
   mainEntity: [
     {
       '@type': 'Question',
-      name: 'Are your diamonds IGI certified?',
+      name: 'Where is the best jewellery showroom in Gurgaon?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes, all diamonds at Auric Jewels are IGI certified with full grading reports available.',
+        text: 'Auric Jewels at 201 Greenwood Plaza, Sector 45, Gurugram is one of the finest jewellery showrooms in Gurgaon offering IGI certified diamonds and BIS hallmarked gold.',
       },
     },
     {
       '@type': 'Question',
-      name: 'What are the making charges at Auric Jewels Gurgaon?',
+      name: 'Does Auric Jewels sell BIS hallmarked gold jewellery?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Our making charges are transparent and fixed — disclosed upfront with no hidden costs.',
+        text: 'Yes, all gold jewellery at Auric Jewels is BIS hallmarked in 18K and 22K purity with HUID verification.',
       },
     },
     {
       '@type': 'Question',
-      name: 'Is the gold BIS hallmarked at Auric Jewels?',
+      name: 'Are the diamonds at Auric Jewels certified?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes, all gold jewellery is BIS hallmarked in 18K and 22K purity.',
+        text: 'Yes, all diamonds are IGI or GIA certified with full grading reports.',
       },
     },
     {
       '@type': 'Question',
-      name: 'Do you offer private jewellery consultations?',
+      name: 'Does Auric Jewels offer free shipping in India?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes, private appointments available. Book via WhatsApp +91 79060 81795.',
+        text: 'Yes, free insured shipping across India on all orders.',
       },
     },
     {
       '@type': 'Question',
-      name: 'Where is Auric Jewels located?',
+      name: 'Can I buy diamond engagement rings from Auric Jewels in Gurgaon?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Sector 45, Gurugram, Haryana — near South City 1.',
+        text: 'Yes, we have an extensive collection of solitaire and diamond engagement rings at our Sector 45 showroom.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: "What is Auric Jewels' return and exchange policy?",
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'We offer a 15-day return policy and lifetime exchange at full gold value.',
       },
     },
   ],
