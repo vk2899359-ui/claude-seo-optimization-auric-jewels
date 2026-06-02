@@ -15,6 +15,7 @@ const blogMeta = {
   'lightweight-gold-jewellery-working-women': { title: 'Lightweight Gold Jewellery for Working Women', description: 'Best lightweight gold jewellery for working women in 2026 — comfortable, elegant everyday pieces.', category: 'Everyday Jewellery', readTime: '5 min read' },
   'platinum-jewellery-men-gurgaon': { title: 'Platinum Jewellery for Men in Gurgaon', description: 'Premium platinum jewellery for men at Auric Jewels Gurgaon — rings, bracelets, chains in certified platinum.', category: "Men's Jewellery", readTime: '6 min read' },
   'buying-gold-jewellery-gurgaon-checklist': { title: '5 Things to Check Before Buying Gold Jewellery in Gurgaon — A Buyer\'s Checklist', description: 'Planning to buy gold jewellery in Gurgaon? Check making charges, BIS hallmark, after-sales policy and more before you spend a single rupee. Auric Jewels, Sector 45.', category: 'Gold Buying Guide', readTime: '6 min read' },
+  'gold-rate-gurgaon-2026-trend': { title: 'Gold Rate in Gurgaon 2026 — 6 Month Trend & What It Means for Jewellery Buyers', description: 'Track gold rate trends in Gurgaon for 2026. IBJA data analysis for 24K, 22K & 18K gold — and what it means before you buy jewellery. Auric Jewels, Sector 45.', category: 'Gold Rate Guide', readTime: '7 min read' },
 };
 
 // ─── SERVER-SIDE HTML PARSER ──────────────────────────────────────────────────
