@@ -1,5 +1,3 @@
-import fs from 'fs';
-import path from 'path';
 import Head from 'next/head';
 import { useState, useEffect } from 'react';
 
@@ -862,37 +860,117 @@ const STYLES = `
   }
 `;
 
+// ─── SALEOR CMS ───────────────────────────────────────────────────────────────
+
+const SALEOR_API = 'https://api.auricjewels.com/graphql/';
+const SALEOR_TOKEN = 'JzARNGBjDzxPDGQduuhYQq3abpOWKk';
+const SALEOR_PAGE_TYPE = 'UGFnZVR5cGU6Ng==';
+
+async function saleorQuery(query) {
+  const res = await fetch(SALEOR_API, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${SALEOR_TOKEN}`,
+    },
+    body: JSON.stringify({ query }),
+  });
+  return res.json();
+}
+
+// Extract HTML from EditorJS raw blocks stored in Saleor content field
+function extractHtml(contentJson) {
+  if (!contentJson) return '';
+  try {
+    const parsed = typeof contentJson === 'string' ? JSON.parse(contentJson) : contentJson;
+    return (parsed.blocks || [])
+      .filter(b => b.type === 'raw')
+      .map(b => b.data?.html || '')
+      .join('\n');
+  } catch {
+    return '';
+  }
+}
+
+function estimateReadTime(html) {
+  const words = html.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
+  return `${Math.max(1, Math.round(words / 200))} min read`;
+}
+
 // ─── DATA FETCHING ────────────────────────────────────────────────────────────
 
 export async function getStaticPaths() {
-  const contentDir = path.join(process.cwd(), 'content');
-  const files = fs.readdirSync(contentDir).filter(f => f.startsWith('blog-') && f.endsWith('.html'));
+  // Fetch ALL published blog slugs from Saleor — paginated
+  const slugs = [];
+  let cursor = null;
+  do {
+    const after = cursor ? `, after: "${cursor}"` : '';
+    const { data } = await saleorQuery(`{
+      pages(first: 100${after}, filter: { pageTypes: ["${SALEOR_PAGE_TYPE}"] }) {
+        edges { node { slug isPublished } }
+        pageInfo { hasNextPage endCursor }
+      }
+    }`);
+    const edges = data?.pages?.edges ?? [];
+    slugs.push(...edges.filter(e => e.node.isPublished).map(e => e.node.slug));
+    const pi = data?.pages?.pageInfo;
+    cursor = pi?.hasNextPage ? pi.endCursor : null;
+  } while (cursor);
+
   return {
-    paths: files.map(f => ({ params: { slug: f.replace(/^blog-/, '').replace('.html', '') } })),
-    fallback: false,
+    paths: slugs.map(slug => ({ params: { slug } })),
+    fallback: 'blocking', // new Saleor blogs go live without rebuild
   };
 }
 
 export async function getStaticProps({ params }) {
   const { slug } = params;
-  const contentDir = path.join(process.cwd(), 'content');
-  const primary = path.join(contentDir, `${slug}.html`);
-  const fallback = path.join(contentDir, `blog-${slug}.html`);
-  const filePath = fs.existsSync(primary) ? primary : fallback;
-  const rawHtml = fs.readFileSync(filePath, 'utf-8');
+
+  // Fetch page directly by slug from Saleor
+  const { data } = await saleorQuery(`{
+    page(slug: "${slug}") {
+      id title slug isPublished content seoTitle seoDescription
+    }
+  }`);
+
+  const page = data?.page;
+  if (!page || !page.isPublished) return { notFound: true };
+
+  const rawHtml = extractHtml(page.content);
   const nodes = parseBlocks(rawHtml);
 
-  const meta = blogMeta[slug] || {
-    title: slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
-    description: `Expert guide from Auric Jewels on ${slug.replace(/-/g, ' ')}.`,
-    category: 'Jewellery Guide',
-    readTime: '5 min read',
+  // blogMeta overrides take priority; Saleor SEO fields are the fallback
+  const overrides = blogMeta[slug] || {};
+  const meta = {
+    title:       overrides.title       || page.seoTitle       || page.title,
+    description: overrides.description || page.seoDescription || '',
+    category:    overrides.category    || 'Jewellery Guide',
+    readTime:    overrides.readTime    || estimateReadTime(rawHtml),
   };
 
-  const relatedBlogs = Object.entries(blogMeta)
-    .filter(([s]) => s !== slug)
+  // Fetch 2 related blogs (most recent, excluding current)
+  const { data: relData } = await saleorQuery(`{
+    pages(first: 5, sortBy: { field: PUBLICATION_DATE, direction: DESC },
+          filter: { pageTypes: ["${SALEOR_PAGE_TYPE}"] }) {
+      edges { node { slug title seoTitle } }
+    }
+  }`);
+  const relatedBlogs = (relData?.pages?.edges ?? [])
+    .map(e => e.node)
+    .filter(p => p.slug !== slug)
     .slice(0, 2)
-    .map(([s, m]) => ({ slug: s, ...m }));
+    .map(p => {
+      const m = blogMeta[p.slug] || {};
+      return {
+        slug: p.slug,
+        title:    m.title    || p.seoTitle || p.title,
+        category: m.category || 'Jewellery Guide',
+        readTime: m.readTime || '5 min read',
+      };
+    });
 
-  return { props: { slug, nodes, meta, relatedBlogs } };
+  return {
+    props: { slug, nodes, meta, relatedBlogs },
+    revalidate: 3600, // ISR — regenerate every hour
+  };
 }
