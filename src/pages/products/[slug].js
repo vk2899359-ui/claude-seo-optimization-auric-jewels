@@ -148,6 +148,20 @@ export default function ProductPage({ product }) {
             <li>Certificate of authenticity included</li>
           </ul>
         </section>
+
+        {/* ── RELATED READING — internal links to relevant blog posts ── */}
+        {product.relatedBlogs && product.relatedBlogs.length > 0 && (
+          <section className="related-reading">
+            <h2>You May Also Like to Read</h2>
+            <ul>
+              {product.relatedBlogs.map((post) => (
+                <li key={post.slug}>
+                  <a href={`/blog/${post.slug}`}>{post.title}</a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </main>
     </>
   );
@@ -164,6 +178,38 @@ export default function ProductPage({ product }) {
  * The key point: getServerSideProps runs on the SERVER, so Google
  * receives fully-rendered HTML with all product content visible.
  */
+// Maps product category → 2-3 relevant blog slugs + titles for internal linking
+const categoryBlogLinks = {
+  earrings: [
+    { slug: 'best-earrings-teenage-girls-2026-guide', title: 'Best Earrings for Teenage Girls 2026 — Definitive Guide' },
+    { slug: 'best-diamond-earrings-for-daily-wear-gurgaon', title: 'Best Diamond Earrings for Daily Wear in Gurgaon' },
+    { slug: 'best-diamond-earrings-for-wedding-gurgaon', title: 'Best Diamond Earrings for Weddings — Auric Jewels Gurgaon' },
+  ],
+  bracelets: [
+    { slug: 'best-gold-bracelet-for-daily-wear-gurgaon', title: 'Best Gold Bracelet for Daily Wear in Gurgaon' },
+    { slug: 'best-gold-bracelet-for-gifting-gurgaon', title: 'Best Gold Bracelet Gifting Ideas — Auric Jewels Gurgaon' },
+    { slug: 'best-gold-bracelet-for-anniversary-gurgaon', title: 'Best Gold Bracelet for Anniversary Gifts in Gurgaon' },
+  ],
+  mangalsutra: [
+    { slug: 'best-mangalsutra-for-daily-wear-gurgaon', title: 'Best Mangalsutra for Daily Wear in Gurgaon' },
+    { slug: 'best-mangalsutra-for-wedding-gurgaon', title: 'Best Mangalsutra Designs for Weddings — Gurgaon' },
+    { slug: 'diamond-mangalsutra-modern-designs', title: 'Modern Diamond Mangalsutra Designs 2026 | Auric Jewels' },
+  ],
+  rings: [
+    { slug: 'best-diamond-rings-for-engagement-gurgaon', title: 'Best Diamond Rings for Engagement in Gurgaon' },
+    { slug: 'solitaire-ring-buying-guide-gurgaon', title: 'Solitaire Ring Buying Guide Gurgaon — Cuts, Clarity & Price' },
+    { slug: 'custom-diamond-engagement-rings-gurgaon', title: 'Custom Diamond Engagement Rings in Gurgaon' },
+  ],
+  necklaces: [
+    { slug: 'best-diamond-jewellery-showroom-gurgaon', title: 'Best Diamond Jewellery Showroom in Gurgaon | Auric Jewels' },
+    { slug: 'gold-jewellery-making-charges-explained-2026', title: 'Gold Jewellery Making Charges 2026 — Complete Guide' },
+  ],
+  pendants: [
+    { slug: 'best-diamond-pendant-for-engagement-gurgaon', title: 'Best Diamond Pendant for Engagement in Gurgaon' },
+    { slug: 'best-diamond-jewellery-showroom-gurgaon', title: 'Best Diamond Jewellery Showroom in Gurgaon | Auric Jewels' },
+  ],
+};
+
 export async function getServerSideProps({ params, res }) {
   const { slug } = params;
 
@@ -192,6 +238,9 @@ export async function getServerSideProps({ params, res }) {
     images: [],
     longDescription: '', // If empty, auto-generated description is used
   };
+
+  // Attach related blog links based on product category
+  product.relatedBlogs = categoryBlogLinks[product.category] || [];
 
   return { props: { product } };
 }
