@@ -33,7 +33,41 @@ const categoryDescriptions = {
   'nose-pins': `Shop delicate gold and diamond nose pins at Auric Jewels Gurgaon. Our collection features classic studs, elegant hoops, and trendy screw-back designs crafted in 18K and 22K BIS hallmarked gold. Adorned with IGI/GIA certified diamonds, each nose pin is designed for comfort and sparkle. Whether you prefer a subtle diamond stud for everyday wear or a statement piece for special occasions, our range has something for everyone. All nose pins come with secure fittings for worry-free wear. Free shipping across India and 15-day easy returns.`,
 };
 
+const categoryFaqs = {
+  earrings: [
+    { q: 'What types of earrings does Auric Jewels offer?', a: 'Auric Jewels offers diamond studs, hoops, jhumkas, chandbalis, drop earrings, and ear cuffs — all in 18K or 22K BIS hallmarked gold with IGI/GIA certified diamonds.' },
+    { q: 'Are the earrings available in gold and diamond?', a: 'Yes. Our earring collection includes both pure gold designs and diamond-set styles. All diamond earrings carry IGI or GIA certification.' },
+    { q: 'What is the starting price for earrings at Auric Jewels?', a: 'Gold and diamond earrings at Auric Jewels start from approximately ₹18,000. Price varies by gold weight, diamond carat, and design complexity.' },
+    { q: 'Do you offer lightweight earrings for daily wear?', a: 'Yes. We have a dedicated daily wear collection featuring lightweight diamond studs and gold hoops designed for all-day comfort.' },
+    { q: 'Is free shipping available on earrings?', a: 'Yes. All earring orders come with free insured shipping across India and a 15-day return policy.' },
+  ],
+  bracelets: [
+    { q: 'What bracelet styles does Auric Jewels offer?', a: 'Our collection includes tennis bracelets, diamond bangles, gold chain bracelets, charm bracelets, and cuff designs in 18K and 22K BIS hallmarked gold.' },
+    { q: 'Are diamond bracelets at Auric Jewels certified?', a: 'Yes. All diamond bracelets feature IGI or GIA certified diamonds, with full grading reports available for each piece.' },
+    { q: 'What is the price range for bracelets?', a: 'Gold and diamond bracelets at Auric Jewels range from ₹22,000 for lightweight everyday designs to ₹1,50,000 and above for diamond tennis bracelets.' },
+    { q: 'Can I get a bracelet customised at Auric Jewels?', a: 'Yes. We offer custom bracelet design services at our Sector 45 Gurgaon showroom. Book an appointment via WhatsApp at +91-79060-81795.' },
+    { q: 'Do bracelets come with a certificate of authenticity?', a: 'Yes. Every bracelet from Auric Jewels includes a certificate of authenticity, BIS hallmark verification, and diamond grading reports where applicable.' },
+  ],
+  mangalsutra: [
+    { q: 'What styles of mangalsutra does Auric Jewels offer?', a: 'We offer traditional dual-chain mangalsutras, modern single-line pendants, and contemporary minimalist designs — all in 18K and 22K BIS hallmarked gold.' },
+    { q: 'Are diamond mangalsutras available at Auric Jewels?', a: 'Yes. Our diamond mangalsutra collection features IGI and GIA certified diamonds in a range of designs from classic to ultra-modern.' },
+    { q: 'What is the price range for mangalsutras at Auric Jewels?', a: 'Mangalsutras at Auric Jewels start from approximately ₹28,000 for lightweight gold designs and go up to ₹1,80,000 for diamond-set statement pieces.' },
+    { q: 'Can I get a mangalsutra customised?', a: 'Yes. We offer customisation of pendant shapes, chain lengths, and gold weight at our Gurgaon showroom in Sector 45.' },
+    { q: 'Is BIS hallmarking available on mangalsutras?', a: 'Yes. Every mangalsutra at Auric Jewels carries BIS hallmarking with a HUID number, guaranteeing gold purity of 18K or 22K as stated.' },
+  ],
+};
+
+const defaultCategoryFaqs = [
+  { q: 'What is the purity of gold used at Auric Jewels?', a: 'All gold jewellery at Auric Jewels is BIS hallmarked in 18K or 22K purity, with a verifiable HUID number on every piece.' },
+  { q: 'Are the diamonds certified at Auric Jewels?', a: 'Yes. Every diamond is IGI or GIA certified, with a grading report documenting cut, clarity, colour, and carat weight.' },
+  { q: 'What is the return policy?', a: 'Auric Jewels offers a 15-day return policy and lifetime exchange at full gold value on all jewellery purchases.' },
+  { q: 'Do you offer free shipping?', a: 'Yes. Free insured shipping is available across India on all orders from Auric Jewels.' },
+  { q: 'Where is Auric Jewels located?', a: 'Auric Jewels is located at Greenwood Plaza, Sector 45, Gurugram, Haryana 122003. Open 10 AM to 9 PM, 7 days a week.' },
+];
+
 export default function CategoryPage({ slug, seo }) {
+  const faqs = categoryFaqs[slug] || defaultCategoryFaqs;
+
   const breadcrumbData = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -48,13 +82,23 @@ export default function CategoryPage({ slug, seo }) {
     ],
   };
 
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map(({ q, a }) => ({
+      '@type': 'Question',
+      name: q,
+      acceptedAnswer: { '@type': 'Answer', text: a },
+    })),
+  };
+
   return (
     <>
       <SEOHead
         title={seo.title}
         description={seo.description}
         canonical={`/categories/${slug}`}
-        structuredData={breadcrumbData}
+        structuredData={[breadcrumbData, faqSchema]}
       />
 
       <main className="container">
@@ -83,24 +127,17 @@ export default function CategoryPage({ slug, seo }) {
           </div>
         </section>
 
-        {/* FAQ section for additional crawlable content */}
-        <section>
+        {/* FAQ section with schema-backed structured data */}
+        <section className="faq-section">
           <h2>Frequently Asked Questions</h2>
-          <h3>What is the purity of gold used at Auric Jewels?</h3>
-          <p>
-            All our gold jewellery is available in 18K and 22K purity, BIS hallmarked
-            for guaranteed quality and authenticity.
-          </p>
-          <h3>Are the diamonds certified?</h3>
-          <p>
-            Yes, every diamond used in our jewellery is IGI or GIA certified, ensuring
-            exceptional cut, clarity, colour, and carat weight.
-          </p>
-          <h3>Do you offer free shipping?</h3>
-          <p>
-            Yes, we offer free insured shipping across India on all orders. International
-            shipping is available at additional cost.
-          </p>
+          <div className="faq-list">
+            {faqs.map(({ q, a }, i) => (
+              <details key={i} className="faq-item">
+                <summary className="faq-question">{q}</summary>
+                <p className="faq-answer">{a}</p>
+              </details>
+            ))}
+          </div>
         </section>
       </main>
     </>

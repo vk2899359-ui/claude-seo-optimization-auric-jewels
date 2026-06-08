@@ -1,7 +1,7 @@
 import SEOHead from '../components/SEOHead';
 import { homepageSEO, SITE_URL } from '../lib/seo-config';
 
-const structuredData = {
+const jewelryStoreSchema = {
   '@context': 'https://schema.org',
   '@type': 'JewelryStore',
   name: 'Auric Jewels',
@@ -11,14 +11,51 @@ const structuredData = {
     'Premium gold & diamond jewellery store in Gurgaon. BIS hallmarked jewellery, certified diamonds, solitaire collection.',
   address: {
     '@type': 'PostalAddress',
-    addressLocality: 'Gurgaon',
+    streetAddress: 'Greenwood Plaza, Sector 45',
+    addressLocality: 'Gurugram',
     addressRegion: 'Haryana',
+    postalCode: '122003',
     addressCountry: 'IN',
   },
   priceRange: '\u20B9\u20B9\u20B9',
-  telephone: '+91-9012495941',
-  openingHours: 'Mo-Su 10:00-20:00',
+  telephone: '+91-79060-81795',
+  openingHours: 'Mo-Su 10:00-21:00',
 };
+
+const homepageFaqItems = [
+  {
+    q: 'Where is Auric Jewels located?',
+    a: 'Auric Jewels is located at Greenwood Plaza, Sector 45, Gurugram, Haryana 122003. We are open 7 days a week from 10 AM to 9 PM.',
+  },
+  {
+    q: 'What gold karats does Auric Jewels offer?',
+    a: 'Auric Jewels offers 18K and 22K BIS hallmarked gold jewellery. Each piece carries a verifiable HUID number guaranteeing gold purity.',
+  },
+  {
+    q: 'Does Auric Jewels offer diamond jewellery?',
+    a: 'Yes. Auric Jewels offers a wide range of IGI and GIA certified diamond jewellery \u2014 including solitaire rings, diamond earrings, necklaces, bracelets, and bridal sets.',
+  },
+  {
+    q: 'What is the price range at Auric Jewels?',
+    a: 'Our collection ranges from \u20B920,000 for everyday diamond jewellery to \u20B92,00,000 and above for bridal sets and solitaire pieces. We offer transparent pricing with no hidden charges.',
+  },
+  {
+    q: 'Is Auric Jewels a certified jeweller?',
+    a: 'Yes. Auric Jewels is a BIS hallmarked jeweller. All gold jewellery carries BIS certification and all diamonds come with IGI or GIA grading reports, ensuring complete quality assurance.',
+  },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: homepageFaqItems.map(({ q, a }) => ({
+    '@type': 'Question',
+    name: q,
+    acceptedAnswer: { '@type': 'Answer', text: a },
+  })),
+};
+
+const structuredData = [jewelryStoreSchema, faqSchema];
 
 const categories = [
   { name: 'Rings', slug: 'rings', icon: '💍' },
@@ -275,10 +312,25 @@ export default function HomePage() {
             ))}
           </div>
         </section>
+        {/* ═══════════════════════════════════════════════════
+            8. FAQ SECTION
+            ═══════════════════════════════════════════════════ */}
+        <section className="section faq-section">
+          <h2 className="section-title">Frequently Asked Questions</h2>
+          <div className="faq-list">
+            {homepageFaqItems.map(({ q, a }, i) => (
+              <details key={i} className="faq-item">
+                <summary className="faq-question">{q}</summary>
+                <p className="faq-answer">{a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
       </main>
 
       {/* ═══════════════════════════════════════════════════
-          8. FOOTER
+          9. FOOTER
           ═══════════════════════════════════════════════════ */}
       <footer className="footer" id="showroom">
         <div className="container">
